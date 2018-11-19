@@ -1,0 +1,131 @@
+@CHARSET "UTF-8";
+/* Making things look pretty */
+/* Main part of the ribbon */
+.ribbon
+{
+  display: inline-block;
+  position: relative;
+  /*z-index: initial;*/
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.55);
+  border-radius: 3px;
+  text-align: center;
+  padding: 10px 30px;
+  color: #fff;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+  font-size: 32px;
+  margin: 30px 1em;
+  clear:both;
+}
+
+.ribbon:before
+{
+  content: '';
+  border-color: #006DCC transparent transparent;
+  border-style: solid;
+  border-width: 1em;
+  height: 0;
+  width: 100%;
+  position: absolute;
+  z-index: -10;
+  float: left;
+  top: 5px;
+  left: -1em;
+}
+
+.ribbon:after
+{
+  content: '';
+  border-color: transparent transparent #006DCC transparent;
+  border-style: solid;
+  border-width: 1em;
+  height: 0;
+  width: 100%;
+  position: absolute;
+  z-index: -10;
+  float: left;
+  bottom: 3px;
+  right: -1em;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.55);
+}
+
+/* Size Options */
+.ribbon.small
+{
+  font-size: 1em;
+}
+
+.ribbon.medium
+{
+  font-size: 2em;
+}
+
+.ribbon.large
+{
+  font-size: 3em;
+}
+
+.ribbon.x-large
+{
+  font-size: 4em;
+}
+
+/* Color Options */
+.ribbon.blue
+{
+  background-color: #006DCC;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#08C), to(#04C));
+  background-image: -webkit-linear-gradient(#08C, #04C);
+  background-image: -moz-linear-gradient(#08C, #04C);
+  background-image: -o-linear-gradient(#08C, #04C);
+  background-image: linear-gradient(#08C, #04C);
+  background-repeat: repeat-x;
+}
+
+.ribbon.orange
+{
+  background-color: #FAA732;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FBB450), to(#F89406));
+  background-image: -webkit-linear-gradient(#FBB450, #F89406);
+  background-image: -moz-linear-gradient(#FBB450, #F89406);
+  background-image: -o-linear-gradient(#FBB450, #F89406);
+  background-image: linear-gradient(#FBB450, #F89406);
+  background-repeat: repeat-x;
+}
+
+.ribbon.red
+{
+  background-color: #DA4F49;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#EE5F5B), to(#BD362F));
+  background-image: -webkit-linear-gradient(#EE5F5B, #BD362F);
+  background-image: -moz-linear-gradient(#EE5F5B, #BD362F);
+  background-image: -o-linear-gradient(#EE5F5B, #BD362F);
+  background-image: linear-gradient(#EE5F5B, #BD362F);
+  background-repeat: repeat-x;
+}
+
+.ribbon.blue:before
+{
+  border-color: #006DCC transparent transparent;
+}
+.ribbon.blue:after
+{
+  border-color: transparent transparent #006DCC transparent;
+}
+
+.ribbon.orange:before
+{
+  border-color: #FAA732 transparent transparent;
+}
+.ribbon.orange:after
+{
+  border-color: transparent transparent #FAA732 transparent;
+}
+
+.ribbon.red:before
+{
+  border-color: #DA4F49 transparent transparent;
+}
+.ribbon.red:after
+{
+  border-color: transparent transparent #DA4F49 transparent;
+}

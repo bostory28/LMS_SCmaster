@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="schedule">
+	<select id="getSubjectList" parameterType="string" resultType="vo.Subject">
+		select * from subject where flag=#{flag} and field='IT' and class_num='A반'
+	</select>
+	
+	<select id = "getTestList" parameterType="string" resultType="vo.TestVO">
+		select test_seq, subject_seq, testname, limittime, type , to_char(startdate,'YYYY-MM-DD') startdate, to_char(enddate,'YYYY-MM-DD') enddate ,flag from test where flag=#{flag}
+	</select>
+	
+	<insert id="insertSchedule">
+		insert into schedule values(SEQ_schedule_schedule_seq.nextval,#{title},#{content},#{start_date},#{end_date},#{flag})
+	</insert>
+	
+	<select id="getScheduleList" resultType="vo.Schedule">
+		select * from schedule where flag=#{flag}
+	</select>
+	
+	<update id = "updateSchedule" parameterType="vo.Schedule">
+		update 
+			schedule
+		set
+			title = #{title},
+			content = #{content},
+			start_date = #{start_date},
+			end_date = #{end_date}
+		where
+			schedule_seq = #{schedule_seq}
+	</update>
+	
+	<delete id="deleteSchedule" parameterType="int">
+		delete from schedule where schedule_seq=#{schedule_seq}
+	</delete>
+</mapper>

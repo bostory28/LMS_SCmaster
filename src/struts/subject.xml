@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <package name="subject" namespace="/subject" extends="default">
+    <action name="updateForm1" class="subject.subjectAction" method="updateForm1">
+    <result>/jsp/subject/subjectUpdate1.jsp</result>
+    </action>
+    <action name="selectTeacherLists3" class="subject.subjectAction" method="selectTeacherLists3">
+    <result type="json"></result>
+    </action>
+    <action name="subjectView" class="subject.subjectAction" method="flagLists">
+    <result>/jsp/subject/subjectView.jsp</result>
+    </action>
+    <action name="selectIt" class="subject.subjectAction" method="subjectIt">
+    <result type="json"></result>
+    </action>
+    <action name="updateSubject" class="subject.subjectAction" method="updateIt">
+    <result>/jsp/subject/subjectUpdate1.jsp</result>
+    </action>
+    <action name="selectNihon" class="subject.subjectAction" method="selectNihon">
+    <result type="json"></result>
+    </action>
+   	<action name="updateForm" class="subject.subjectAction" method="updateForm">
+   	<result>/jsp/subject/subjectUpdate.jsp</result>
+   	</action>
+    <action name="subjectManager" class="subject.subjectAction" method="flagLists">
+    <result>/jsp/subject/subjectManager.jsp</result>
+    </action>
+    <action name="teacherLists" class="subject.subjectAction" method="teacherList">
+    <result type="json"></result>
+    </action>
+    <action name="selectSubject" class="subject.subjectAction" method="subjectList">
+    <result type="json"></result>
+    </action>
+    <action name="subjectDelete" class="subject.subjectAction" method="subjectDelete">
+    <result type="json"></result>
+    </action>
+    <action name="insertSubject" class="subject.subjectAction" method="insertSubject">
+    <result type="json"></result>
+    </action>
+    <action name="subjectDetail" class="subject.subjectAction" method="subjectDetail">
+    <result>/jsp/subject/subjectDetail.jsp</result>
+    </action>
+    <action name="goSubjectForm" class="subject.subjectAction" method="detailForm">
+    <result>/jsp/subject/subjectWindow.jsp</result>
+    </action>
+    <action name="detailInsert" class="subject.subjectAction" method="detailInsert">
+    <result>/jsp/subject/subjectWindow.jsp</result>
+    </action>
+    <action name="detailDelete" class="subject.subjectAction" method="detailDelete">
+    <result type="json"></result>
+    </action>
+    <action name="selectSubject1" class="subject.subjectAction" method="selectSubject1">
+    <result type="json"></result>
+    </action>
+     <action name="selectSubject2" class="subject.subjectAction" method="selectSubject1">
+    <result>/jsp/subject/subjectManager.jsp</result>
+    </action>
+    <action name="selectTeacherLists2" class="subject.subjectAction" method="selectTeacherLists2">
+    <result type="json"></result>
+    </action>
+    <action name="detailUpdate" class="subject.subjectAction" method="detailUpdate">
+    <result type="json"></result>
+    </action>
+    
+    </package>
+    
+    
+</struts>

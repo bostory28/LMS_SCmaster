@@ -1,0 +1,7 @@
+#board constants
+board.countperpage=5
+board.pagepergroup=5
+
+#board - upload path
+board.uploadpath=C:\Users\John\workspace\LMS\WebContent\upload\file
+ 

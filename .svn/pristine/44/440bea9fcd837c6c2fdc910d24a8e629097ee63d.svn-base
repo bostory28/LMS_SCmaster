@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.devMode" value="true" />
+
+    <package name="default" namespace="/" extends="struts-default">
+    
+    <!-- Json 플러그인 사용. json타입의 Result 사용. -->
+     <result-types>
+       	<result-type name="json" class="org.apache.struts2.json.JSONResult"></result-type>    
+     </result-types>
+ 	 
+
+        <default-action-ref name="index" />
+
+        <global-results>
+            <result name="error">/error.jsp</result>
+            <result name="LOGIN">/member/loginForm.action</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error"/>
+        </global-exception-mappings>
+
+        <action name="index">
+            <result>/index.jsp</result>
+        </action>
+       
+    </package>
+    
+   
+     
+    
+	 <!-- 출석부 관련 스트럿츠 파일 -->
+     <include file="struts/attendance.xml"/> 
+     <!-- 회원 관련 스트럿츠 파일 -->
+     <include file="struts/member.xml"/>
+     <!-- 통합게시판 관련 스트럿츠 파일 -->
+     <include file="struts/bbs.xml"/> 
+     <!-- 과목별시험 관련 스트럿츠 파일 -->
+     <include file="struts/teststruts.xml"/>
+     <!-- 강의관련 스트럿츠 파일 -->
+     <include file="struts/subject.xml"/>
+     <!-- 일정관련 스트럿츠 파일 -->
+     <include file="struts/schedule.xml"/>
+     <!-- 일정관련 스트럿츠 파일 -->
+     <include file="struts/prob.xml"/>
+       
+       
+     
+     
+    <!-- Add packages here -->
+
+</struts>

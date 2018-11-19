@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- DB접속정보 값을 가지고 있는 파일 설정 -->
+	<properties resource="db.properties" />
+
+	<!-- 별명 부여 -->
+	<typeAliases>
+		<typeAlias type="vo.Student" alias="student"/>
+		<typeAlias type="vo.Register" alias="register"/>
+		<typeAlias type="vo.Subject" alias="subject"/>
+		<typeAlias type="vo.Teacher" alias="teacher"/>
+		<typeAlias type="vo.Admin" alias="admin"/>
+		<typeAlias type="vo.Board" alias="board"/>
+		<typeAlias type="vo.Reply" alias="reply"/>
+		<typeAlias type="vo.Pfdreply" alias="pfdreply"/>
+		<typeAlias type="vo.TestVO" alias="Test"/>
+		<typeAlias type="vo.FlagVO" alias="Flag"/>
+		<typeAlias type="vo.SubjectVO" alias="SubjectVO"/>
+		<typeAlias type="vo.TestSubTeaVO" alias="TestSubTea"/>
+		<typeAlias type="vo.OneofTestScore" alias="oneoftestScore"/>
+		<typeAlias type="vo.StudentListForTeacherVO" alias="getSListForTeacher"/>
+		<typeAlias type="vo.JapAvgVO" alias="japAvgVO"/>
+		<typeAlias type="vo.Problem" alias="problem"/>
+		<typeAlias type="vo.Prob_List" alias="problist"/>
+		<typeAlias type="vo.Score" alias="score"/>
+		
+		
+	</typeAliases>
+
+	<!-- DB접속 정보 셋팅 -->
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" /><!--Managed- WAS에서제공되는 
+				Transaction사용 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" /><!--properties File에서동적으로읽어오기 -->
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- mapper.xml 파일 설정 -->
+	<mappers>
+		<mapper resource="mapper/memberMapper.xml" /> 		<!-- 멤버 매퍼 -->
+		<mapper resource="mapper/bbsMapper.xml" /> 			<!-- 통합게시판 매퍼 -->
+		<mapper resource="mapper/subjectMapper.xml" />		<!-- 강의 매퍼 -->
+		<mapper resource="mapper/attendanceMapper.xml" />	<!-- 출석 매퍼 -->
+		<mapper resource="mapper/scheduleMapper.xml" />		<!-- 스케쥴(일정) 매퍼 -->
+		<mapper resource="mapper/testmapper.xml" />			<!-- 시험관리매퍼 -->
+		<mapper resource="mapper/probMapper.xml" />			<!-- 시험문제 관련 -->
+	</mappers>
+
+</configuration>

@@ -1,0 +1,909 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>3조 프로젝트</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Bootstrap -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link href="../jquery-plugin/anythingSlider/anythingslider.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link href="../jquery-plugin/mctabs/generic-notForMcTabs.css" rel="stylesheet" type="text/css" />
+    <link href="../jquery-plugin/mctabs/template2/mctabs.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="../css/radar-chart.css">
+	 <!-- 리스트 테이블 CSS 지정 시작 -->
+     <link href="<s:url value="/css/bootstrap-table.css"/>" rel="stylesheet">
+    
+	<script src="../jquery-plugin/mctabs/javascript-tabs.js" type="text/javascript"></script>
+    <script src="../js/respond.js"></script>
+    <script src="../js/jquery-1.7.2.min.js"></script>
+    <script src="../jquery-plugin/anythingSlider/jquery.anythingslider.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="<s:url value="/js/bootstrap-tableForSeong.js"/>"></script>
+	<!-- 그래프를 위한 스타일 -->	
+	<style>
+		th{text-align:center;}
+		body {padding: 20px; }
+		#HelloBoy{
+		     border:1px solid;
+		     background:#FFFFFF; 
+		     width:230px;
+		     height:120px;
+		     display:none;
+		     position:absolute;
+  		 }
+  	 input[type=radio] {
+		    border: 0px;
+		    width: 600%;
+		    height: 2em;
+	}
+   /* #view1{
+       border:2px solid #a1a1a1;
+       border-radius:25px;
+   } */
+  	</style>			
+	
+	<style>
+		.radar-chart .area {
+		  fill-opacity: 0.7;
+		}
+		.radar-chart.focus .area {
+		  fill-opacity: 0.3;
+		}
+		.radar-chart.focus .area.focused {
+		  fill-opacity: 0.9;
+		}
+		.area.germany, .germany .circle {
+		  fill: #FFD700;
+		  stroke: none;
+		}
+		.area.argentina, .argentina .circle {
+		  fill: #ADD8E6;
+		  stroke: none;
+		}
+</style>	
+<!-- 그래프를 위한 스크립트 -->
+	<script src="http://d3js.org/d3.v3.js"></script>
+	<script src="../js/radar-chartForMypage.js"></script>
+	<script>
+		RadarChart.defaultConfig.color = function() {};
+		RadarChart.defaultConfig.radius = 3;
+	</script>
+<!-- 그래프의 입력값을 위한 스크립트  -->	
+	<script>
+		var data = [
+		  {
+		    className: 'germany', // optional can be used for styling //exam data
+		    axes: [
+		      {axis: "strength", value: 13}, 
+		      {axis: "intelligence", value: 6}, 
+		      {axis: "charisma", value: 5},  
+		      {axis: "dexterity", value: 9},  
+		      {axis: "luck", value: 2},
+			  {axis: "blessed", value: 12}
+		    ]
+		  },
+		  {
+		    className: 'argentina',
+		    axes: [
+		      {axis: "strength", value: 10}, 
+		      {axis: "intelligence", value: 7}, 
+		      {axis: "charisma", value: 10},  
+		      {axis: "dexterity", value: 13},  
+		      {axis: "luck", value: 9}
+		    ]
+		  }
+		];
+		function randomDataset() {//exam function
+		  return data.map(function(d) {
+		    return {
+		      className: d.className,
+		      axes: d.axes.map(function(axis) {
+		        return {axis: axis.axis, value: Math.ceil(Math.random() * 10)};
+		      })
+		    };
+		  });
+		}
+	</script>
+	<!--차트를 위한 스크립트2  -->
+	<script>
+		var chart = RadarChart.chart();
+		var cfg = chart.config(); // retrieve default config
+		var svg = d3.select('body').append('svg')
+		  .attr('width', cfg.w)
+		  .attr('height', cfg.h + cfg.h / 4);
+		svg.append('g').classed('single', 1).datum(randomDataset()).call(chart);
+		
+		// many radars //exam radar function
+		chart.config({w: cfg.w / 4, h: cfg.h / 4, axisText: false, levels: 0, circles: false});
+		cfg = chart.config();
+		function render() {
+		  var game = svg.selectAll('g.game').data(
+		    [
+		      randomDataset(),
+		      randomDataset(),
+		      randomDataset(),
+		      randomDataset()
+		    ]
+		  );
+		  game.enter().append('g').classed('game', 1);
+		  game
+		    .attr('transform', function(d, i) { return 'translate('+(i * cfg.w)+','+ (cfg.h * 4) +')'; })
+		    .call(chart);
+		
+		  setTimeout(render, 1000);
+		}
+		render();
+	</script>	
+    <script type="text/javascript">
+    var mouseX,mouseY,windowWidth,windowHeight;//학생의간단한정보를툴팁형식으로보여주기
+    var  popupLeft,popupTop;
+    $(document).ready(function() {
+    	
+    	$(document).mousemove(function(e){//마우스위치의 좌표 가져오기
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+            //To Get the relative position
+            if( this.offsetLeft !=undefined)
+              mouseX = e.pageX - this.offsetLeft;
+            if( this.offsetTop != undefined)
+              mouseY = e.pageY; - this.offsetTop;
+
+            if(mouseX < 0)
+                 mouseX =0;
+            if(mouseY < 0)
+                mouseY = 0;
+
+            windowWidth  = $(window).width();
+            windowHeight = $(window).height();
+    });
+    	$('.studentNames').hover(function(){//학생의 명단에 호버될때&아웃될때
+    	       $('#HelloBoy').show();
+    	      var popupWidth  = $('#HelloBoy').outerWidth();
+    	      var popupHeight =  $('#HelloBoy').outerHeight();
+
+    	      if(mouseX+popupWidth > windowWidth)
+    	        popupLeft = mouseX-popupWidth;
+    	      else
+    	       popupLeft = mouseX;
+
+    	      if(mouseY+popupHeight > windowHeight)
+    	        popupTop = mouseY-popupHeight;
+    	      else
+    	        popupTop = mouseY; 
+    	      if(popupLeft < 0)
+    	          popupLeft = 0;
+    	      if(popupTop < 0)
+    	          popupTop = 0;
+
+    	      $('#HelloBoy').offset({top:popupTop,left:popupLeft}); 
+    	      },function(){$('#HelloBoy').html("클릭하세요");$('#HelloBoy').hide();});
+    		$('.studentNames').click(function(){
+    		 var dataId = $(this).attr('data-id');
+    		 var path = '${path}';
+    		 $.ajax({//
+    				url:'getOneofStudent.action',
+    				type:'post',
+    				dataType:'json',
+    				data:{idForView:dataId},
+    				success:function(json){
+    					var outhtml="";//<img src="+path+json.student.propic+"/>
+    					outhtml+="<div style='float:left'><img src='../upload/"+json.student.propic+"' width=100px height=119px/></div>";
+    					outhtml+="<table style='float:left;font-size:13pt;'><tr>";
+    					outhtml+="<td>이름 : </td><td>"+json.student.name+"</td></tr>";
+    					outhtml+="<tr><td>반 : </td><td>"+json.student.class_num+"</td></tr>";
+    					outhtml+="<tr><td>기수 : </td><td>"+json.student.flagnum+"</td></tr>";
+    					/* outhmtl+="<tr><td>수강과목 : </td><td>"+json.student.subjectname+"</td></tr>";  */
+    					outhtml+="</table>";
+    					$('#HelloBoy').html(outhtml);
+    				}
+    			});
+	   	
+    	});
+    	
+    	$("#viewScoreDiv1").click(viewScore('${sessionScope.userSign.id}'));
+    	$("#viewScoreDiv2_1").click(viewScoreJ('${sessionScope.userSign.id}'));
+    	$("#viewScoreDiv2_2").click(viewScoreJ('${sessionScope.userSign.id}'));
+    	$("#propicUpdateForm").click(function(){
+    		window.open("propicUpdateForm.action","newwin","top=200,left=400,width=300,height=300,resizable=no");
+    	});
+    	$("#avapicUpdateForm").click(function(){
+    		window.open("avapicUpdateForm.action","newwin","top=200,left=400,width=300,height=300,resizable=no");
+    	});
+    	$('a.btn-info').tooltip();
+		$('#slider').anythingSlider({
+			buildArrows : false,
+			autoPlay : true,
+			buildStartStop : true
+			
+			
+		});
+		$("#profile").change(function(){
+	        readURL(this);
+	    });
+		$(".active").click(sideMenuChange);
+		$(".unactivated").click(sideMenuChange);
+    }); // end ready
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();            
+            reader.onload = function (e) {
+                $('#target').attr('src', e.target.result);
+            };
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }//profile사진 미리보기
+    function updateForm(){
+	     $('#eipDiv').html('<div class="col-lg-1" style="font-weight:bold;font-size:140%">유</div>'
+				  		  +'<div class="col-lg-1"><input type="radio" class="form-control" id="eipInput" name="student.eip" value=1 checked/></div>'
+				  		  +'<div class="col-lg-1" style="font-weight:bold;font-size:140%">무</div>'
+						  +'<div class="col-lg-1"><input type="radio" class="form-control" id="eipInput2" name="student.eip" value=0 /></div>');
+	     $('#jlptDiv').html('<select class="form-control" id="jlptInput" name="student.jlpt">'
+				  			+'<option>N1</option>'
+				  			+'<option>N2</option>'
+				  			+'<option>N3</option>'
+				  			+'<option>N4</option>'
+				  			+'<option>N5</option>'
+				  			+'<option>없음</option>'
+							+'</select>');
+	     $('#emailDiv').html('<input type="email" class="form-control" id="emailInput" name="student.email" value="<s:property value="%{#session.userSign.email}"/>" placeholder="ex)abcde@naver.com">');
+	     $('#phoneDiv').html('<input type="text" class="form-control" id="phoneInput" name="student.phone" value="<s:property value="%{#session.userSign.phone}"/>" placeholder="연락처">');
+	     $('#updateBtn').html('<input type="button" class="btn btn-success" onclick="javascript:sendingupdateForm()" value="수정">');
+			      
+    }
+    function updateFormT(){
+	     /* $('#teachersChildren').html("Nice to meet you!"); */
+	     $('#emailDiv').html('<input type="email" id="emailInput" name="teacher.email" size="15" value="<s:property value="%{#session.userSign.email}"/>" placeholder="ex)abcde@naver.com">');
+	     $('#phoneDiv').html('<input type="text" id="phoneInput" name="teacher.phone" size="15" value="<s:property value="%{#session.userSign.phone}"/>" placeholder="연락처">');
+	     $('#updateBtn').html('<input type="button" class="btn btn-success" onclick="javascript:sendingupdateFormT()" value="수정">');
+			      
+   }
+    function sendingupdateForm(){//학생의프로필수정 스크립트
+    	var id= "${sessionScope.userSign.id}";
+    	var email= document.getElementById("emailInput").value;
+    	var phone= document.getElementById("phoneInput").value;
+    	var jlpt= document.getElementById("jlptInput").value;
+    	var eip= document.getElementById("eipInput");
+    	var eipValue= 0;
+    	if(eip.checked==true){eipValue=1;}
+    	$.ajax({//
+			url:'profileUpdate.action',
+			type:'post',
+			dataType:'json',
+			data:{
+				  id:id,
+				  email:email,
+				  phone:phone,
+				  jlpt:jlpt,
+				  eip:eipValue},
+			complete:updated
+		});
+
+    }
+    function sendingupdateFormT(){//선생님의프로필수정 스크립트
+    	var id= "${sessionScope.userSign.id}";
+    	var email= document.getElementById("emailInput").value;
+    	var phone= document.getElementById("phoneInput").value;
+    	$.ajax({
+			url:'profileUpdateT.action',
+			type:'post',
+			dataType:'json',
+			data:{
+				  id:id,
+				  email:email,
+				  phone:phone},
+			complete:updated
+		});
+    }
+	function updated(){
+		alert("수정되었습니다");
+		location.reload();
+	}
+    function sideMenuChange(){
+    	$(".unactivated").attr("class","unactivated");
+    	$(".active").attr("class","unactivated");
+    	$(this).attr("class","active");
+    }
+    /* function loadPropic(){
+    	var propic = "<s:property value='%{#session.userSign.propic}'/>";
+    	var fullPath = "../upload/"+propic;
+    	$("#propicView").html('<img id="target" src='+fullPath+' alt="your image" height="120px" width="100px"/>');
+    	alert(fullPath);
+    	
+    } */
+    function viewScore(id){
+    	$.ajax({//
+			url:'myScoreView.action',
+			type:'post',
+			dataType:'json',
+			data:{idForView:id},
+			success:output
+		});
+    }
+    function viewScoreJ(id){
+    	$.ajax({
+			url:'myScoreViewJ.action',
+			type:'post',
+			dataType:'json',
+			data:{idForView:id},
+			success:outputJ
+		});
+	 
+    }
+    function output(json){
+ 		//차트데이터
+ 		var temp="[{";
+ 			 temp+="className: 'argentina',";
+ 			 temp+="axes: [";
+ 		for(var i=0;i<json.scoreList.length;i++){
+ 			temp+="{axis: '"+json.scoreList[i].testname+"', value: "+json.scoreList[i].score+"},";
+		}
+ 		     temp+="]";
+ 			 temp+="}";
+ 			 temp+="];";
+ 		   data = eval(temp);
+ 		 //성적조회 뷰
+ 	    var outhtml="";			/* border:2px solid WhiteSmoke;padding-right:50px;padding-left:50px; */
+ 		   	outhtml+="<div class='col-lg-12' align='center'><table style='margin-top:0cm;'><tr>";
+ 		   	outhtml+="<td colspan='4'><div id='propicDiv'>";
+ 	    	outhtml+="<div style='height:200px;width:160px;border:1px solid black;font-weight:bold;font-size:15pt;margin-right:3cm;'>";
+ 		   	outhtml+="<img id='target' src='../upload/"+json.student.propic+"' alt='your image' height='200px' width='160px'/><br/>";
+ 	    	outhtml+="이름 : "+json.student.name+"<br/>";
+ 	    	outhtml+="기수 : "+json.student.flagnum+"<br/>";
+ 	    	outhtml+="반 : "+json.student.class_num;
+ 	    	outhtml+="</div></td><td colspan='2'><div id='graphDiv' class='chart-container'></div></td></tr></table><br/><hr size='0.5' style='border:1px solid black;'/>";
+ 		   	outhtml+="<table align='left'><tr><td colspan='6' align='left' style='font-weight:bold;'>IT성적과목별리스트</td></tr></table>";
+ 	    	outhtml+="<table class='table table-condensed' style='text-align:center;'><tr><th colspan='2'>시험일시</th><th>시험명</th><th>점수</th></tr>";
+ 	    	for(i=0;i<json.scoreList.length;i++){
+ 	 			outhtml+="<tr><td colspan='2'>"+json.scoreList[i].startdate.substring(0,11)+"</td><td>"+json.scoreList[i].testname+"</td><td>"+json.scoreList[i].score+"점</td></tr>";
+ 			}
+ 	    	outhtml+="<tr><td colspan='6' align='left' style='font-weight:bold;'>IT성적역량평가</td></tr>";
+ 	    	for(i=0;i<json.scoreList2.length;i++){
+ 	 			outhtml+="<tr><td colspan='2'>"+json.scoreList2[i].startdate.substring(0,11)+"</td><td>"+json.scoreList2[i].testname+"</td><td>"+json.scoreList2[i].score+"점</td></tr>";
+ 			}
+ 	    	outhtml+="";
+ 			outhtml+="</table></div>";
+ 	
+    	/* data = [
+    			  {
+    			    className: 'argentina', // optional can be used for styling
+    			    axes: [
+    			      {axis: "Java", value: 13}, 
+    			      {axis: "Oracle", value: 6}, 
+    			      {axis: "charisma", value: 5},  
+    			      {axis: "dexterity", value: 9},  
+    			      {axis: "luck", value: 2},
+    				  {axis: "blessed", value: 12}
+    			    ]
+    			  }
+    			]; */
+ 		//차트그리기
+       	$("#viewScoreDiv").html(outhtml);chartDraw(); 
+    }
+    function outputJ(json){
+ 		//차트데이터
+ 		var writeAvg=0;
+ 		var interviewAvg=0;
+ 		var speechAvg=0;
+ 		var writeSum=0;
+ 		var interviewSum=0;
+ 		var speechSum=0;
+ 		var cnt=0;
+ 		var katakanaAvg=json.japAvgVO.katakanaAvg; 
+ 		var writingAvg=json.japAvgVO.writingAvg;
+ 		var readingAvg=json.japAvgVO.readingAvg;
+ 		var kanjiAvg=json.japAvgVO.kanjiAvg;
+ 		/* alert(kanjiAvg); */
+ 		 var temp="[{";
+ 			 temp+="className: 'argentina',";
+ 			 temp+="axes: [";
+ 		for(var i=0;i<json.scoreListJ2.length;i++){
+ 			writeSum+=json.scoreListJ2[i].write;
+ 			interviewSum+=json.scoreListJ2[i].interview;
+ 			speechSum+=json.scoreListJ2[i].speech;
+ 			++cnt;
+		}
+ 		writeAvg=writeSum/cnt;
+ 		interviewAvg=interviewSum/cnt;
+ 		speechAvg=speechSum/cnt;
+ 		/* alert(speechAvg); */
+ 			 temp+="{axis: '필기', value: "+writeAvg+"},";
+			 temp+="{axis: '인터뷰', value: "+interviewAvg+"},";
+			 temp+="{axis: '스피치', value: "+speechAvg+"},";
+			 temp+="{axis: '카타카나', value: "+katakanaAvg+"},";
+			 temp+="{axis: '작문', value: "+writingAvg+"},";
+			 temp+="{axis: '읽기', value: "+readingAvg+"},";
+			 temp+="{axis: '한자', value: "+kanjiAvg+"},";
+ 		     temp+="]";
+ 			 temp+="}";
+ 			 temp+="];";
+ 		   data = eval(temp);
+ 		 //성적조회 뷰
+ 	    var outhtml="";
+ 		   	outhtml+="<div class='col-lg-12' align='center'><table style='margin-top:0cm;'><tr>";
+ 		   	outhtml+="<td colspan='4'><div id='propicDiv'>";
+ 	    	outhtml+="<div style='height:200px;width:160px;border:1px solid black;font-weight:bold;font-size:15pt;margin-right:3cm;'>";
+ 		   	outhtml+="<img id='target' src='../upload/"+json.student.propic+"' alt='your image' height='200px' width='160px'/><br/>";
+ 	    	outhtml+="이름 : "+json.student.name+"<br/>";
+ 	    	outhtml+="기수 : "+json.student.flagnum+"<br/>";
+ 	    	outhtml+="반 : "+json.student.class_num;
+ 	    	outhtml+="</div></td><td colspan='2'><div id='graphDiv' class='chart-containerJ' ></div></td></tr></table><br/><hr size='0.5' style='border:1px solid black;'/>";
+ 		   	outhtml+="<table align='left'><tr><td colspan='6' align='left' style='font-weight:bold;'>일본어과목별리스트</td></tr></table>";
+ 	    	outhtml+="<table class='table table-condensed' style='text-align:center;'><tr><th colspan='2'>시험일시</th><th>시험명</th><th>성적</th></tr>";
+ 	    	for(var i=0;i<json.scoreListJ.length;i++){
+ 	 			outhtml+="<tr><td colspan='2'>"+json.scoreListJ[i].startdate.substring(0,11)+"</td><td>"+json.scoreListJ[i].testname+"</td><td>"+json.scoreListJ[i].score+"점</td></tr>";
+ 			}
+ 	    	outhtml+="<tr><td colspan='6' align='left' style='font-weight:bold;'>일본어 월말평가</td></tr>";
+ 	    	outhtml+="<tr><th colspan='2'>시험일시</th><th>시험명</th><th>필기</th><th>인터뷰</th><th>스피치</th></tr>";
+ 	    	for(var i=0;i<json.scoreListJ2.length;i++){
+ 	 			outhtml+="<tr><td colspan='2'>"+json.scoreListJ2[i].startdate.substring(0,11)+"</td><td>"+json.scoreListJ2[i].testname+"</td><td>"+json.scoreListJ2[i].write+"점</td><td>"+json.scoreListJ2[i].interview+"점</td><td>"+json.scoreListJ2[i].speech+"점</td></tr>";
+ 			}
+ 			outhtml+="</table></div>";
+    	/* data = [
+    			  {
+    			    className: 'argentina', // optional can be used for styling
+    			    axes: [
+    			      {axis: "Java", value: 13}, 
+    			      {axis: "Oracle", value: 6}, 
+    			      {axis: "charisma", value: 5},  
+    			      {axis: "dexterity", value: 9},  
+    			      {axis: "luck", value: 2},
+    				  {axis: "blessed", value: 12}
+    			    ]
+    			  }
+    			]; */
+ 		//차트그리기
+       	$("#viewScoreDivJ").html(outhtml);chartDrawJ(); 
+    }
+    function chartDraw(){//차트그리는펑션
+		RadarChart.defaultConfig.levelTick = true;
+		RadarChart.draw(".chart-container", data);
+    }
+    function chartDrawJ(){//차트그리는펑션
+		RadarChart.defaultConfig.levelTick = true;
+		RadarChart.draw(".chart-containerJ", data);
+    }
+    </script>
+    
+</head>
+
+<body>
+<div class="container">
+	
+	<s:if test="%{#session.userSign.id!=null}">
+				<div class="navbar navbar-defalut nav-justified navbar-fixed-top " style="border:1px solid black; background-color:#ddd; height:40px; padding:3px;">
+					
+		    		<span style="position:relative; left:70%; padding:5px;">
+		    		<b>반갑습니다&nbsp;${sessionScope.userSign.id}님&nbsp;</b>
+		    		<a href="mypage_details.action" class="btn btn-info btn-sm">마이페이지</a>
+		    		&nbsp;
+		    		&nbsp;
+		    		<a href="logout.action" class="btn btn-danger btn-sm ">로그아웃</a>
+		    		</span>
+	    		 </div>
+		</s:if>
+		<s:else>
+				<div class="navbar navbar-defalut nav-justified navbar-fixed-top " style="border:1px solid black; background-color:#ddd; height:40px; padding:3px;">
+			    	<span style="position:relative; left:80%; padding:5px;">
+			    		<a href="member/memberJoinForm.action" class="btn btn-success btn-sm">회원가입</a>
+			    		&nbsp;
+			    		&nbsp;
+			    		<a href="member/loginForm.action" class="btn btn-primary btn-sm ">로그인</a>
+			    	</span>
+	    		 </div>
+		</s:else>
+		
+		
+	 <!-- 홈 --> 	
+	 	 <s:url value="/index.action" var="goIndex"></s:url>
+	 	
+	 
+	 <!-- 커뮤니티 -->
+  		 <!-- 통합게시판으로 이동함 -->
+  	 	 <s:url value="/bbs/bbsList.action" var="goBbsList"></s:url>
+ 	
+		
+		
+
+    <!-- row 1: header -->
+    <header class="row">
+    	<div class="col-lg-4 col-sm-5">
+        	<a href="<s:url value='index.action'/>"><img src="../images/KUpEzwG.gif" alt="Wisdom Pets. click for home." class="img-responsive" style="height:200px;"></a>
+        </div>
+    	<div class="col-lg-8 col-sm-7">
+        	<img src="../images/logo.gif" alt="" class="hidden-xs img-responsive">
+        </div>
+    </header>
+
+
+
+	<!-- row 1: navigation -->
+    <div class="row">
+    	<nav class="navbar navbar-default navbar-inverse nav-justified">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+    				<span class="icon-bar"></span>
+    				<span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="index.action">홈</a></li>
+                    <li><a href="#">공지사항</a></li>
+                    <li class="dropdown"><a href="#" data-toggle="dropdown">학사관리<span class="caret"></span></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="memberManagement.action">회원관리</a></li>
+                            <li><a href="#">출석관리</a></li>
+                            <li><a href="#">성적관리</a></li>
+                            <li><a href="#">상담관리</a></li>
+                        </ul>                    
+                    </li>
+                    
+                    <li class="dropdown"><a href="#" data-toggle="dropdown">학습관리 <span class="caret"></span></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href="#">강의관리</a></li>
+                            <li><a href="#">강의목록</a></li>
+                            <li><a href="#">일정관리</a></li>
+                        </ul>                    
+                    </li>
+                    
+                     
+                    <li class="dropdown"><a href="#" data-toggle="dropdown">커뮤니티 <span class="caret"></span></a>
+                    	<ul class="dropdown-menu">
+                        	<li><a href='<s:property value="#goBbsList"/>'>통합 게시판</a></li>
+                            <li><a href="#">외국어 게시판</a></li>
+                        </ul>                    
+                    </li>
+                    <li><a href="#">사이트 정보</a></li>
+                </ul> 
+            </div>
+         </nav> 
+    </div>
+   
+ 
+    
+    <!-- row 3: article/aside -->
+    <div class="row">
+    
+    	<article class="thumbnail col-lg-9 col-sm-8 col-lg-push-3 col-sm-push-4">
+        
+            <ol class="breadcrumb">
+              <li><a href="index.action">홈</a> <span class="glyphicon glyphicon-circle-arrow-right"></span></li>
+              <li class="active">마이페이지</li>	
+            </ol>
+            <div class="panel-container">
+	            <div style="margin-top:0px;">
+			        <ul id="tabs1" class="mctabs">
+			            <li><a href="#view1">상세정보</a></li>
+			            <li><a href="#view2" id="mySubjectList">내 강의보기</a></li>
+			            <li><a href="#view3" class="viewScoreDiv1">IT</a></li>
+			            <li><a href="#view4" id="viewScoreDiv2_1">일본어</a></li>
+			        </ul>
+			        
+			    </div>
+	            <div id="view1">        
+	             <s:if test="%{#session.userSign.type==0}"><!--type0 은 관리자  -->
+	             	<h1>Admin</h1>
+	             	<div style="height:140px;width:120px;border:1px solid black;">
+						 <img id="target2" src="../upload/${sessionScope.userSign.avapic}" alt="your image" height="140px" width="120px"/>
+					</div>
+	             	<input type="button" id="avapicUpdateForm" class="btn btn-default" value="아바타변경">
+	             </s:if>
+	             <s:elseif test="%{#session.userSign.type==1}"><!--type1 은 선생님  -->
+	                <h2 style="margin-top:0cm;">Teacher</h2>
+		              <div class="col-lg-9" style="margin-top:0cm;">
+			        			<table class='table table-condensed' width="500px" height="200px">
+			        				<tr>
+			        					<th class="info">Profile</th>
+			        					<th class="info">Avatar</th>
+			        					<th class="info">승인</th>
+										<td class="info" >
+											<s:if test="%{#session.userSign.confirm==0}">		
+					        				  <span class="btn btn-primary btn-sm">미승인</span>
+					        				</s:if>
+					        				<s:elseif test="%{#session.userSign.confirm==1}">
+											  <span class="btn btn-success btn-sm">OK</span>
+											</s:elseif>
+										</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<td rowspan=4>
+			        						<center>
+				        						<div style="height:140px;width:120px;border:1px solid black;">
+							        			 <img id="target" src="../upload/${sessionScope.userSign.propic}" alt="your image" height="140px" width="120px"/>
+							        			</div>
+							        			<!-- <input type='file' id='profile' name='student.propic'/><br> -->
+							        			<input type="button" id="propicUpdateForm" class="btn btn-default" value="사진변경">
+						        			</center>
+			        					</td>
+			        					<td rowspan=4 class="info">
+			        						<center>
+			        							<div style="height:140px;width:120px;border:1px solid black;">
+							        			 <img id="target2" src="../upload/${sessionScope.userSign.avapic}" alt="your image" height="140px" width="120px"/>
+							        			</div>
+							        			<!-- <input type='file' id='profile' name='student.propic'/><br> -->
+							        			<input type="button" id="avapicUpdateForm" class="btn btn-default" value="아바타변경">
+						        			</center>
+			        					</td>
+			        					<th class="info">이름</th>
+			        					<td class="info" >
+				        					<div id="nameDiv">
+										  	  <s:property value="%{#session.userSign.name}"/>
+										      <!-- <input type="password" class="form-control" id="inputPassword2" placeholder="비밀번호 확인"> -->
+										      <input type="hidden" name="teacher.type" value="2">			    
+									  		</div>
+			        					</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<th>연락처</th>
+			        					<td class="info" >
+			        						<div id="phoneDiv">
+										  		<s:property value="%{#session.userSign.phone}"/>
+										  	</div>
+			        					</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<th class="info">생년월일</th>
+			        					<td class="info" >
+			        						<div id="birthDiv">
+										  		<s:property value="%{#session.userSign.birth}"/>
+										  	</div>
+			        					</td>
+			        				</tr>
+			        					<tr class="info">
+			        					<th class="info">이메일</th>
+			        					<td class="info" >
+			        						<div id="emailDiv">
+										  		<s:property value="%{#session.userSign.email}"/>										
+										  	</div>
+			        					</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<td colspan=4 align='right' class="info">
+			        						<div id="updateBtn">
+			        							<a href='javascript:updateFormT()' class="btn btn-info">수정</a>
+			        						</div>
+			        					</td>
+			        				</tr>
+			        			</table>
+			        		</div>
+			        		<div class="col-lg-3">
+			        			    <div id="teachersChildren" style="border:1px soild black">
+									      		<table data-toggle="table" data-show-refresh="false" data-show-toggle="false" data-pagination="false" data-search="false" style="text-align:center">
+									      			<thead><tr><th data-sortable="true">수강학생명단</th></tr></thead>
+									      			<tbody>
+											  			<s:iterator value="studentListForTeacher" status="stat">
+											  				<tr>
+											  					<td class="WhiteSmoke">	
+												  				    <div class="studentNames" data-id="<s:property value="studentListForTeacher[#stat.index].studentId"/>"><s:property value="studentListForTeacher[#stat.index].studentId"/></div>
+											  				 	</td>
+											  				</tr> 					
+											  			</s:iterator>
+										  			</tbody>
+									  			</table>
+									</div> 				  	
+									<div id="HelloBoy">
+							         	클릭하세요
+							        </div>
+			        		</div> 
+	             </s:elseif>
+	             <s:elseif test="%{#session.userSign.type==2}"><!--type2 는 학생  -->
+	                <h2>Student</h2>
+	                <!---------------------------------------------------  -->
+	                <div class="col-lg-12" style="margin-top:0cm;">
+			        			<table class='table table-condensed' width="300px" height="200px">
+			        				<tr>
+			        					<th class="info">Profile</th>
+			        					<th class="info">Avatar</th>
+			        					<th class="info">승인</th>
+										<td class="info" >
+											<s:if test="%{#session.userSign.confirm==0}">		
+					        				  <span class="btn btn-primary btn-sm">미승인</span>
+					        				</s:if>
+					        				<s:elseif test="%{#session.userSign.confirm==1}">
+											  <span class="btn btn-success btn-sm">OK</span>
+											</s:elseif>
+										</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<td rowspan=6>
+			        						<center>
+				        						<div style="height:140px;width:120px;border:1px solid black;">
+							        			 <img id="target" src="../upload/${sessionScope.userSign.propic}" alt="your image" height="140px" width="120px"/>
+							        			</div>
+							        			<!-- <input type='file' id='profile' name='student.propic'/><br> -->
+							        			<input type="button" id="propicUpdateForm" class="btn btn-default" value="사진변경">
+						        			</center>
+			        					</td>
+			        					<td rowspan=6 class="info">
+			        						<center>
+				        						<div style="height:140px;width:120px;border:1px solid black;">
+							        			 <img id="target2" src="../upload/${sessionScope.userSign.avapic}" alt="your image" height="140px" width="120px"/>
+							        			</div>
+							        			<!-- <input type='file' id='profile' name='student.propic'/><br> -->
+							        			<input type="button" id="avapicUpdateForm" class="btn btn-default" value="아바타변경">
+						        			</center>
+			        					</td>
+			        					<th class="info">기수</th>
+			        					<td>
+			        						<s:property value="%{#session.userSign.flagnum}"/>
+			        					</td>
+			        				</tr>
+			        				<tr>
+			        					<th class="info">반</th>
+			        					<td class="info" >
+				        					<div id="nameDiv">
+										  	 	 <s:property value="%{#session.userSign.class_num}"/>		    
+									  		</div>
+			        					</td>
+			        				</tr>
+			        				<tr>
+			        					<th class="info">이름</th>
+			        					<td class="info" >
+				        					<div id="nameDiv">
+										  	  <s:property value="%{#session.userSign.name}"/>
+										      <!-- <input type="password" class="form-control" id="inputPassword2" placeholder="비밀번호 확인"> -->
+										      <input type="hidden" name="teacher.type" value="2">			    
+									  		</div>
+			        					</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<th>연락처</th>
+			        					<td class="info" >
+			        						<div id="phoneDiv">
+										  		<s:property value="%{#session.userSign.phone}"/>
+										  	</div>
+			        					</td>
+			        				</tr>
+			        				<tr class="info">
+			        					<th class="info">생년월일</th>
+			        					<td class="info" >
+			        						<div id="birthDiv">
+										  		<s:property value="%{#session.userSign.birth}"/>
+										  	</div>
+			        					</td>
+			        				</tr>
+			        					<tr class="info">
+			        					<th class="info">이메일</th>
+			        					<td class="info" >
+			        						<div id="emailDiv">
+										  		<s:property value="%{#session.userSign.email}"/>										
+										  	</div>
+			        					</td>
+			        				</tr>
+			        				<tr>
+			        					<td colspan=4>
+				        					<div style="font-weight:bold; font-size:140%;">자격유무</div>
+							  			</td>
+			        				</tr>
+			        				<tr>
+			        					<td colspan=2>
+				        					정보처리(산업)기사
+							  			</td>
+							  			<td colspan=2>
+							  				<div id="eipDiv">
+												<s:if test="%{#session.userSign.eip==0}">
+											  		없음
+											  	</s:if><s:elseif test="%{#session.userSign.eip==1}">
+														<img alt="합격" src="../images/ok.png">
+											  	</s:elseif>
+										  	</div>
+							  			</td>
+			        				</tr>
+			        				<tr>
+			        					<td colspan=2>
+			        						JLPT
+			        					</td>
+			        					<td colspan=2>
+			        						<div id="jlptDiv" style="font-weight:bold;font-size:140%">
+										 		<s:property value="%{#session.userSign.jlpt}"/>
+										  	</div>
+			        					</td>
+			        				</tr>
+			        				<tr>
+			        					<td colspan=4 align="right">
+			        						<div id="updateBtn">
+										      <a href='javascript:updateForm()' class="btn btn-info">수정</a>
+										    </div>
+			        					</td>
+			        				</tr>
+			        			</table>
+			        		</div>                     
+				   </s:elseif>
+	            </div>
+	            <div id="view2">
+	             <s:if test="%{#session.userSign.type==0}">
+	             	<h1>Admin</h1>
+	             </s:if>
+	             <s:elseif test="%{#session.userSign.type==1}">
+	             	<h1>Teacher</h1>
+	             </s:elseif>
+	             <s:elseif test="%{#session.userSign.type==2}">   
+	                <ul id="tabs2" class="mctabs" >
+	                    <li><a href="#view2-1" id="subjectList">IT</a></li>
+	                    <li><a href="#view2-2">일본어</a></li>
+                	</ul>        
+	                <div class="panel-container" style="border:2px solid #CCC; border-radius:5px;">
+	                    <div id="view2-1" style="padding:30px;">
+	                    	<ul><li>IT 수강목록이 보여집니다.</li></ul>
+	                 		<table style="cell-padding:5px;">
+	                 			<tr><th>No.</th><th>과목</th><th>담당강사</th><th>시작일자</th><th>종료일자</th></tr>
+    					   		<s:iterator value='subjectList' status='stat'>
+    					   			<tr>
+    					   				<td><s:property value="%{#stat.index+1}"/></td>
+    					   				<td><a href="#"><s:property value="%{subjectList[#stat.index].subjectname}"/></a></td>
+    					   				<td><s:property value="%{subjectList[#stat.index].id}"/></td>
+    					   				<td><s:property value="%{subjectList[#stat.index].start_date}"/></td>
+    					   				<td><s:property value="%{subjectList[#stat.index].end_date}"/></td>
+    					   			</tr>
+    					   		</s:iterator>
+    					   	</table>
+	                    </div>
+	                    <div id="view2-2" style="padding:30px;">
+	                        <ul><li>일본어 수강목록이 보여집니다.</li></ul>
+	                        <table style="cell-padding:5px;">
+	                 			<tr><th>No.</th><th>과목</th><th>담당강사</th><th>시작일자</th><th>종료일자</th></tr>
+    					   		<s:iterator value='subjectListJ' status='stat'>
+    					   			<tr>
+    					   				<td><s:property value="%{#stat.index+1}"/></td>
+    					   				<td><a href="#"><s:property value="%{subjectListJ[#stat.index].subjectname}"/></a></td>
+    					   				<td><s:property value="%{subjectListJ[#stat.index].id}"/></td>
+    					   				<td><s:property value="%{subjectListJ[#stat.index].start_date}"/></td>
+    					   				<td><s:property value="%{subjectListJ[#stat.index].end_date}"/></td>
+    					   			</tr>
+    					   		</s:iterator>
+    					   	</table>
+	                    </div>
+	                </div>
+	               </s:elseif>
+	            </div>
+	            <div id="view3"><!-- 성적정보가보여진다 -->
+	            	<div id="viewScoreDiv"></div>
+	            </div>
+	            <div id="view4"><!-- 일본어의 성적정보가 보여진다  -->
+	            	<div id="viewScoreDivJ"></div>
+	            </div>
+	        </div>
+            
+         <div class="clearfix visible-xs visible-lg"></div>
+          
+        </article>
+         
+     	<aside class="col-lg-3 col-sm-4 col-lg-pull-9 col-sm-pull-8 ">
+       		<div class="thumbnail">
+       			<h3>마이페이지</h3>
+	            <ul class="nav nav-pills nav-stacked"> <!-- class="active" -->
+	                <li class="unactivated"><a href="#view1">상세정보</a></li>
+	                <li class="unactivated" ><a href="#view2">내 강의보기</a></li>
+	                <li class="unactivated" ><a href="#view3" class="viewScoreDiv1">성적조회</a></li>
+	                <li><a href="#view3" class="viewScoreDiv1">&nbsp;&nbsp;-IT</a></li>
+	                <li><a href="#view4" id="viewScoreDiv2_2">&nbsp;&nbsp;-일본어</a></li>
+	            </ul> 
+       		</div>
+        </aside>
+        
+       </div>   
+    <!-- row 4 -->
+    <footer class="row">
+         <p><small>본 웹사이트는 SC마스터 학생들을 지원하기 위해 테스트중이며 현재 어떠한 경제적 지원도 받고 있지 않습니다.</small></p>
+         <p><small> Produced by Young-Bo Lee, team 3 Leader.  all right reserved.</small></p>
+    </footer>
+
+</div> <!-- end container -->
+
+<!-- javascript -->
+<!-- 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+		$('a.btn-info').tooltip()
+			$('#slider').anythingSlider();
+	</script> -->
+</body>
+</html>

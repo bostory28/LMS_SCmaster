@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <package name="attendance" namespace="/attendance" extends="default">
+    
+    
+   
+    
+    <action name = "goAttendanceList" class = "attendance.AttendanceAction" method="goAttendanceList">
+		
+		<result name="admin">/jsp/attendance/attendanceList.jsp</result>
+   		<result name="teacher">/jsp/attendance/attendanceList.jsp</result>
+    	<result name="student">/jsp/attendance/attendanceList_student.jsp</result>
+    	
+    	<result type="redirect">../member/loginForm.action</result>
+    </action>
+    
+
+     <action name= "goAttendanceCheck">
+    	<result>/jsp/attendance/attendanceCheck.jsp</result>
+    </action>
+    
+    <action name = "getNameList" class = "attendance.AttendanceAction" method = "getNameList">
+    	<result type = "json"></result>
+   	</action>
+    
+    <action name = "insertAttendance" class ="attendance.AttendanceAction" method = "insertAttendance">
+    	<result type = "json"></result>
+    </action>
+    
+    <action name = "getAttendanceList1" class = "attendance.AttendanceAction" method = "getAttendanceList1">
+    	<result type = "json"></result>
+    </action>
+    
+    <action name = "updateAttendance" class = "attendance.AttendanceAction" method = "updateAttendance">
+    	<result type = "json"></result>
+    </action>
+    
+    <!--  여기서 부터는 사유서 작성에 대한 액션을 부여한다. -->
+    <action name = "statementRead" class = "attendance.AttendanceAction" method = "statementRead">
+    	<result type = "json"></result>
+    </action>
+    
+    <action name = "insertStatement" class = "attendance.AttendanceAction" method = "insertStatement">
+    	<result type="redirect">goAttendanceList.action</result>
+    </action>
+    
+    <action name ="updateStatement" class  = "attendance.AttendanceAction" method = "updateStatement">
+    	<result type="redirect">goAttendanceList.action</result>
+    </action>
+    
+    </package>
+</struts>

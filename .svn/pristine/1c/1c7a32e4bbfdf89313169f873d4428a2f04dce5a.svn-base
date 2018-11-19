@@ -1,0 +1,74 @@
+package trouble;
+
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import common.MybatisConfig;
+import vo.Teacher;
+import vo.Trouble;
+
+public class troubleDao {
+	SqlSessionFactory factory = MybatisConfig.getSqlSessionFactory();
+	SqlSession sqlSession = null;
+	public void troubleInsert(Trouble tro) {
+		// TODO Auto-generated method stub
+				try {
+					sqlSession = factory.openSession();
+					sqlSession.insert("trouble.troubleInsert", tro);
+					sqlSession.commit();
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				} finally {
+					if(sqlSession!=null) sqlSession.close();
+				}
+		
+	}
+	public List<Trouble> troubleLists() {
+		List<Trouble>troubleLists=null;
+		try {
+			sqlSession = factory.openSession();
+			troubleLists=sqlSession.selectList("trouble.troubleLists");
+			sqlSession.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			if(sqlSession!=null) sqlSession.close();
+		}
+		return troubleLists;
+	}
+	
+	public Trouble troubleRead(int readKey) {
+		Trouble trou=null;
+		
+		try {
+			sqlSession = factory.openSession();
+			trou=sqlSession.selectOne("trouble.troubleRead",readKey);
+			sqlSession.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			if(sqlSession!=null) sqlSession.close();
+		}
+		return trou;
+	}
+	public List<Teacher> teacherLists() {
+		List<Teacher>teacherLists=null;
+		try {
+			sqlSession = factory.openSession();
+			teacherLists=sqlSession.selectList("trouble.teacherLists");
+			sqlSession.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			if(sqlSession!=null) sqlSession.close();
+		}
+		return teacherLists;
+	}
+
+}

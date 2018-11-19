@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="test">
+	<!-- 과목별 시험등록 -->
+	<!-- field별로 과목의 이름을 가져온다. -->
+	<select id="getSubject" parameterType="hashMap" resultType="SubjectVO">
+		select distinct subjectname from subject where field = #{field} and flag = #{flag} and subjectname not like '역량평가'
+	</select>
+	<!-- flag를 가져온다. -->
+	<select id="getFlag" resultType="Flag">
+		select flag_num, to_char(start_date, 'yyyy-mm-dd') start_date, to_char(end_date, 'yyyy-mm-dd') end_date from flag order by flag_num
+	</select>
+	<!-- flag별로 class_num을 가져온다. -->
+	<select id="getClassOfFlag" parameterType="String" resultType="String">
+		select distinct class_num from student where flagnum = #{flag}
+	</select>
+	<!-- 검색결과를 가져온다. -->
+	<select id="getTest" parameterType="hashMap" resultType="TestSubTea">
+		select te.id teacherid, te.name teachername, te.field field, s.subject_seq subjectid , 
+				s.subjectname subjectname, s.flag flag, s.class_num class_num, t.test_seq testid, 
+				t.testname testname, to_char(t.startdate, 'yyyy-mm-dd') startdate, to_char(t.enddate, 'yyyy-mm-dd') enddate, t.limittime limittime, t.type type 
+		from test t, teacher te, subject s 
+		where te.id = s.id and s.subject_seq = t.subject_seq and s.flag = #{flag} and t.type = #{online} and
+			  s.subjectname like '%'||#{subject}||'%' and s.class_num like '%'||#{class_num}||'%' and t.testname not like '%'||'역량평가'||'%' and s.subjectname not like '역량평가' and s.field = #{field} order by class_num, t.test_seq, startdate
+	</select>
+	<!-- 통합된 시험을 가져온다. -->
+	<select id="getUnitedTest" parameterType="hashMap" resultType="TestSubTea">
+		select distinct s.subjectname subjectname, s.flag flag, t.testname testname, to_char(t.startdate, 'yyyy-mm-dd') startdate, 
+				to_char(t.enddate, 'yyyy-mm-dd') enddate, t.type type, t.limittime
+		from subject s, test t
+		where s.subject_seq = t.subject_seq and s.flag = #{flag} and t.testname not like '%'||'역량평가'||'%' and s.subjectname not like '역량평가' and s.field = #{field}
+		order by flag, startdate
+	</select>
+	<!-- 기수별로 과목을 가져온다. -->
+	<select id="getSubjectOfFlag" parameterType="hashMap" resultType="String">
+		select distinct subjectname from subject where field = #{field} and flag = #{flag} and subjectname not like '역량평가'
+	</select>
+	<!-- 시험을 일괄등록한다. -->
+	<insert id="insertTest" parameterType="Test">
+		<selectKey keyProperty="testid" resultType="int" order="BEFORE">
+			select SEQ_test_test_seq.nextval from dual
+		</selectKey>
+		insert into test values (#{testid}, #{subjectid}, #{testname}, #{limittime}, #{type}, #{startdate}, #{enddate}, #{flag})
+	</insert>
+	<!-- 과목명의 각각의 seq을 가져온다. -->
+	<select id="getSeqOfSubject" parameterType="String" resultType="int">
+		select subject_seq from subject where subjectname = #{subjectname} order by subject_seq
+	</select>
+	<!-- 해당 과목명의 시험명의 각각의 seq을 가져온다. -->
+	<select id="getSeqOfTest" parameterType="hashMap" resultType="int">
+		select test_seq 
+		from test t, subject s 
+		where t.subject_seq = s.subject_seq and testname = #{testname} and subjectname = #{subjectname} and t.flag = #{flag} and t.testname not like '%'||'역량평가'||'%'
+		order by test_seq
+	</select>
+	<!-- 시험을 일괄삭제한다. -->
+	<delete id="deleteTest" parameterType="int">
+		delete from test where test_seq = #{testid}
+	</delete>
+	<!-- 시험의 일괄 edit를 위해 선택한 시험의 정보를 가져온다. -->
+	<select id="getOneUnitedTest" parameterType="hashMap" resultType="TestSubTea">
+		select distinct t.flag flag, type type, subjectname, testname,to_char(startdate, 'yyyy-mm-dd') startdate, to_char(enddate, 'yyyy-mm-dd') enddate, limittime 
+		from test t, subject s 
+		where t.subject_seq = s.subject_seq and  subjectname = #{subjectname} and testname = #{testname} and t.flag = #{flag} and t.testname not like '%'||'역량평가'||'%'
+	</select>
+	<!-- 일괄수정한다. -->
+	<update id="editTest" parameterType="TestSubTea">
+		update test set flag = #{flag}, type = #{type}, subject_seq = #{subjectid}, testname = #{testname}, startdate = #{startdate}, enddate = #{enddate}, limittime = #{limittime}
+		where test_seq = #{testid}
+	</update>
+	<!-- 시험을 본 학생들의 목록을 가져온다. -->
+	<select id="getStudentOfTest" parameterType="TestSubTea" resultType="TestSubTea">
+		select distinct su.subjectname, st.name, t.testname, st.id, su.subject_seq subjectid, t.test_seq testid, su.class_num, su.flag
+		from student st, subject su, test t 
+		where st.flagnum = su.flag and st.class_num = su.class_num and su.subject_seq = #{subjectid} and t.test_seq = #{testid} and st.flagnum = #{flag} and su.subjectname not like '역량평가' and st.class_num = #{class_num}
+		order by name
+	</select>
+	<!-- 학생의 시험 본 점수를 등록한다. -->
+	<insert id="insertScore" parameterType="TestSubTea">
+		insert into score values (SEQ_score_score_seq.nextval, #{testid}, #{id}, #{score})
+	</insert>
+	<!-- 이미 성적입력한 시험인지 알기위해 이미 등록한 시험이면 성적을 가져온다. -->
+	<select id="getAlreadyInsertGrade" parameterType="TestSubTea" resultType="TestSubTea">
+		select te.id teacherid, te.name teachername, te.field field, s.subject_seq subjectid , 
+				s.subjectname subjectname, s.flag flag, s.class_num class_num, t.test_seq testid, 
+				t.testname testname, to_char(t.startdate, 'yyyy-mm-dd') startdate, to_char(t.enddate, 'yyyy-mm-dd') enddate, t.limittime limittime, t.type type, sc.score
+		from test t, teacher te, subject s, score sc
+		where te.id = s.id and s.subject_seq = t.subject_seq and sc.test_seq = t.test_seq and s.flag = #{flag} and t.type = #{type} and
+			  s.subjectname like '%'||#{subjectname}||'%' and s.class_num like '%'||#{class_num}||'%' and t.test_seq = #{testid} and t.testname not like '%'||'역량평가'||'%' and s.subjectname not like '역량평가' 
+		order by class_num, t.test_seq, startdate
+	</select>
+	<!-- 성적수정입력폼을 만들기 위해 기존의 이름과 성적을 가져온다. -->
+	<select id="getGradeOfStudent" parameterType="TestSubTea" resultType="TestSubTea">
+		select t.test_seq, st.id, score, t.testname, su.subjectname, st.name, su.class_num,
+		t.flag, t.test_seq testid, su.subject_seq subjectid from score sc, student st, test t, subject su
+		where su.subject_seq = t.subject_seq and t.test_seq = sc.test_seq and sc.id = st.id and sc.test_seq = #{testid} and t.testname not like '%'||'역량평가'||'%'and su.subjectname not like '역량평가'
+		order by name
+	</select>
+	<!-- 성적을 수정한다. -->
+	<update id="editScore" parameterType="TestSubTea">
+		update score set score = #{score} where test_seq = #{testid} and id = #{id}
+	</update>
+	
+	
+	
+	<!-- 역량평가시험등록 -->
+	<!-- 이전에 입력했던 역량평가의 리스트를 출력한다. -->
+	<select id="getInitCapacity" parameterType="String" resultType="TestSubTea">
+		select 
+			     flag 
+			   , testname 
+			   , trunc(avg_score, 1) avg_score 
+			   , case when avg_score = 0 then 'R'  
+			   							 else 'M' end as input_type 
+			   , to_char(startdate, 'yyyy-mm-dd') startdate
+    		   , to_char(enddate, 'yyyy-mm-dd') enddate
+    		   , limittime 
+    	from 
+	   			(select  
+		   				  t.testname
+		   				, t.flag
+		   				, avg(nvl(s.score,0)) as avg_score 
+		   				, t.startdate 
+		   				, t.enddate 
+		   				, t.limittime
+				 from     
+				 		  test t
+				 		, subject j 
+				 		, score s 
+				 where   
+				 	        t.subject_seq = j.subject_seq 
+				 	    and t.test_seq = s.test_seq(+)  
+				 	    and j.subjectname = '역량평가'
+   						and t.flag = #{flag}  
+	   			 group by  
+	   			 		t.testname, t.flag, t.enddate, t.startdate, t.limittime 
+	   			 ) 
+         order by flag, testname
+	</select>
+	<!-- 기수별로 역량평가가 몇개 입력되었는지 확인한다. -->
+	<select id="getNumOfCapacity" parameterType="String" resultType="String">
+		select distinct testname from test where testname like '%'||'역량평가'||'%' and flag = #{flag} order by testname
+	</select>
+	<!-- 역량평가를 시험테이블에 등록한다. -->
+	<insert id="insertCapacityTest" parameterType="TestSubTea">
+		<selectKey keyProperty="testid" resultType="int" order="BEFORE">
+			select SEQ_test_test_seq.nextval from dual
+		</selectKey>
+		insert into test(test_seq, subject_seq, testname, limittime, type, startdate, enddate, flag) 
+		values(#{testid}, #{subjectid}, #{testname}, #{limittime}, 'NO', #{startdate}, #{enddate}, #{flag})
+	</insert>
+	<!-- 해당 flag와 해당 역량평가를 가져온다.수정을 위해서 -->
+	<select id="getCapacityForEdit" parameterType="hashMap" resultType="TestSubTea">
+		select distinct flag, to_char(startdate, 'yyyy-mm-dd') startdate, to_char(enddate, 'yyyy-mm-dd') enddate, limittime 
+		from test
+		where testname = #{testname} and flag = #{flag}
+	</select>
+	<!-- 역량평가 정보를 수정한다. -->
+	<update id="updateValueOfCapacity" parameterType="TestSubTea">
+		update test set flag = #{flag}, startdate = #{startdate}, enddate = #{enddate}, limittime = #{limittime}
+		where test_seq = #{testid}
+	</update>
+	<!-- 수정하기 위해 해당 목록의 정보를 가져온다. -->
+	<select id="getTestOfCapacity" parameterType="hashMap" resultType="TestSubTea">
+		select test_seq testid, flag, subject_seq subjectid, to_char(t.startdate, 'yyyy-mm-dd') startdate, to_char(t.enddate, 'yyyy-mm-dd') enddate, t.limittime, testname, type  
+		from test t where testname like '%'||#{testname}||'%' and flag = #{flag} order by testname
+	</select>
+	<!-- 역량평가정보를 삭제한다. -->
+	<delete id="deleteTestOfCapacity" parameterType="TestSubTea">
+		delete from test where test_seq	= #{testid}
+	</delete>
+	<!-- 역량평가를 본 학생을 가져온다. -->
+	<select id="getStudentOfCapacity" parameterType="hashMap" resultType="TestSubTea">
+		select distinct su.subjectname, st.name, t.testname, st.id, su.subject_seq subjectid, t.test_seq testid, t.FLAG, su.class_num
+		from student st, subject su, test t 
+		where st.flagnum = su.flag and st.class_num = su.class_num and t.SUBJECT_SEQ = su.SUBJECT_SEQ and t.testname = #{testname} and su.subjectname = '역량평가' and t.flag = #{flag}
+		order by name
+	</select>
+	<!-- 역량평가의 testid를 가져온다.성적을 입력하기 위해 -->
+	<select id="getTestidOfCapacity" parameterType="hashMap" resultType="int">
+		select test_seq from test
+		where testname = #{testname} and flag = #{flag}
+	</select>
+	<!-- 역량평가의 성적을 입력한다. -->
+	<insert id="insertScoreOfCapacity" parameterType="TestSubTea">
+		insert into score(score_seq, test_seq, id, score) values(SEQ_score_score_seq.nextval, #{testid}, #{id}, #{score})
+	</insert>
+	<!-- 성적수정을 위해 값을 가져온다. -->
+	<select id="getScoreOfCapacity" parameterType="hashMap" resultType="TestSubTea">
+		select 
+             t.testname
+           , t.test_seq testid
+           , st.id
+           , st.name
+           , t.flag
+           , to_char(t.startdate, 'yyyy-mm-dd') startdate
+           , to_char(t.enddate, 'yyyy-mm-dd') enddate
+           , t.limittime
+           , score
+        from
+             test t
+           , student st
+           , subject j
+           , score s
+       where
+             st.id = s.id
+         and t.subject_seq = j.subject_seq
+         and t.test_seq = s.test_seq(+)
+         and j.subjectname = '역량평가'
+         and t.testname = #{testname}
+         and t.flag = #{flag}
+       order by name
+	</select>
+	<!-- 점수를 수정한다. -->
+	<select id="updateScoreOfCapacity" parameterType="TestSubTea">
+		update score set score = #{score} where test_seq = #{testid} and id = #{id}
+	</select>
+	
+	
+	
+	<!-- 일본어매일시험 -->
+	<!-- 일본어 반을 가져온다. -->
+	<select id="getClassOfJap" parameterType="hashMap" resultType="String">
+		select distinct class_num from subject where field = #{field} and flag = #{flag}
+	</select>
+	<!-- 시험의 목록을 가져온다. -->
+	<select id="getDailyOfTest" parameterType="String" resultType="TestSubTea">
+		select distinct
+		        flag
+		      , subjectname
+		      , testname
+		      , to_char(startdate, 'yyyy-mm-dd') startdate
+		      , to_char(enddate, 'yyyy-mm-dd') enddate
+		      , limittime
+	          , name teachername
+	          , class_num
+	          , ID teacherid
+	          , test_seq testid
+		      , case when score = 0 then 'X'
+		                            else 'O' end as input_type
+		from 
+		      (select
+		              t.flag
+	                , name
+	                , te.ID
+		            , subjectname
+		            , testname
+		            , t.test_seq
+              	    , su.class_num
+		            , startdate
+		            , enddate
+		            , limittime
+		            , NVL(score, 0) as score
+         	   from
+		              subject su
+                	, teacher te
+		            , test t
+		            , score s
+		  	   where
+		                su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		            and t.TEST_SEQ = s.TEST_SEQ(+)
+                	and te.ID = su.ID
+		            and t.flag = #{flag}
+		            and su.field = #{field}
+		            and t.testname not like '월말평가'
+		            and su.class_num = #{class_num}
+		            and t.testname not like '%'||'월말평가'||'%'
+		      )
+		order by startdate
+	</select>
+	<!-- 과목명과 과목의 id를 가져온다. -->
+	<select id="getSubjectOfDaily" parameterType="hashMap" resultType="TestSubTea">
+		select subject_seq subjectid, id, subjectname, flag, class_num, start_date startdate, end_date enddate, field from subject where class_num = #{class_num} and flag = #{flag}
+	</select>
+	<!-- 시험을 등록한다. -->
+	<select id="insertDailyTest" parameterType="TestSubTea">
+		insert into test values (SEQ_test_test_seq.nextval, #{subjectid}, #{testname}, #{limittime}, 'NO', #{startdate}, #{enddate}, #{flag})
+	</select>
+	<!-- 매일시험을 보는 사람들의 목록을 가져온다. -->
+	<select id="getStudentOfDaily" parameterType="hashMap" resultType="TestSubTea">
+		select  distinct
+		        st.name
+		      , st.id
+		      , t.testname
+		      , t.test_seq testid
+		      , t.TEST_SEQ testid
+		      , su.SUBJECT_SEQ subjectid
+		      , su.SUBJECTNAME 
+		      , su.class_num
+		      , su.flag
+ 		 from
+		        student st
+		      , subject su
+		      , test t 
+ 		where
+		          st.flagnum = su.flag 
+		      and st.JAPANESE = su.class_num 
+		      and su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		      and t.testname = #{testname}
+		      and su.subjectname = #{subjectname}
+		      and t.flag = #{flag}
+		      and su.class_num = #{class_num}
+		      and t.test_seq = #{test_seq}
+		order by name
+	</select>
+	<!-- 성적을 입력한다. -->
+	<insert id="insertScoreOfDaily" parameterType="TestSubTea">
+		insert into score values(SEQ_score_score_seq.nextval, #{testid}, #{id}, #{score})
+	</insert>
+	<!-- 성적수정폼 -->
+	<select id="getScoreOfDaily" parameterType="hashMap" resultType="TestSubTea">
+		select
+		        st.id
+		      , st.name
+		      , score
+		      , testname
+		      , t.test_seq testid
+		      , subjectname
+		      , su.subject_seq subjectid
+		      , t.flag
+		      , su.class_num
+		  from
+		        student st
+		      , score s
+		      , test t
+		      , subject su
+		 where
+		          st.id = s.id
+		      and t.TEST_SEQ = s.TEST_SEQ(+)
+		      and su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		      and t.testname = #{testname}
+		      and t.FLAG = #{flag}
+		      and su.SUBJECTNAME = #{subjectname}
+		      and t.test_seq = #{test_seq}	
+		 order by name
+	</select>
+	<!-- 매일시험의 성적을 수정한다. -->
+	<update id="updateScoreOfDaily" parameterType="TestSubTea">
+		update score set score = #{score} where test_seq = #{testid} and id = #{id}
+	</update>
+	<!-- 시험을 삭제한다. -->
+	<delete id="deleteTestOfDaily" parameterType="int">
+		delete from test where test_seq = #{testid}
+	</delete>
+	<!-- 일본어매일시험의 반의 학생수를 보여준다. -->
+	<select id="getStudentNumOfDaily" parameterType="hashMap" resultType="int">
+		select count(*) from student where flagnum = #{flag} and japanese = #{class_num}
+	</select>
+	
+	
+	<!-- 월말평가시험 -->
+	<select id="getJapTestOfMonth" parameterType="hashMap" resultType="TestSubTea">
+		select
+		        subject_seq subjectid
+		      , subjectname
+		      , class_num
+  		from
+    		  subject
+ 		where
+		          field = #{field}
+		      and flag = #{flag}
+	</select>
+	<!-- 시험을 등록한다. -->
+	<insert id="insertMonthOfTest" parameterType="TestSubTea">
+		<selectKey keyProperty="testid" resultType="int" order="BEFORE">
+			select SEQ_test_test_seq.nextval from dual
+		</selectKey>
+		insert into test values (#{testid}, #{subjectid}, #{testname}, #{limittime}, 'NO', #{startdate}, #{enddate}, #{flag})
+	</insert>
+	<!-- 시험목록을 가져온다. -->
+	<select id="getMonthOfTest" parameterType="hashMap" resultType="TestSubTea">
+		select distinct flag, testname, to_char(startdate, 'yyyy-mm-dd') startdate, to_char(enddate, 'yyyy-mm-dd') enddate, limittime from test where flag = #{flag} and testname like '%'||'월말평가'||'%' order by startdate desc
+	</select>
+	<!-- 수정을 위해서 수정 정보를 가져온다. -->
+	<select id="getMonthOfOneTest" parameterType="hashMap" resultType="TestSubTea">
+		select distinct flag, testname, to_char(startdate, 'yyyy-mm-dd') startdate, to_char(enddate, 'yyyy-mm-dd') enddate, limittime from test where flag = #{flag} and testname like '%'||'월말평가'||'%' and testname = #{testname}
+	</select>
+	<!-- 같은 이름의 시험을 모두 가져온다. 수정하기 위해 -->
+	<select id="getMonthPerTest" parameterType="hashMap" resultType="TestSubTea">
+		select flag, testname, test_seq testid, to_char(startdate, 'yyyy-mm-dd') startdate, to_char(enddate, 'yyyy-mm-dd') enddate, limittime from test where flag = #{flag} and testname like '%'||'월말평가'||'%' and testname = #{testname}
+	</select>
+	<!-- 시험을 수정한다. -->
+	<update id="editMonthTest" parameterType="TestSubTea">
+		update test set flag = #{flag}, startdate = #{startdate}, enddate = #{enddate}, limittime = #{limittime}
+		where test_seq = #{testid}
+	</update>
+	<!-- 시험을 삭제한다. -->
+	<delete id="deleteMonthTest" parameterType="hashMap">
+		delete from test where testname = #{testname} and flag = #{flag}
+	</delete>
+	<!-- 검색한 내용을 가져온다. -->
+	<select id="getMonthSearched" parameterType="hashMap" resultType="TestSubTea">
+		select
+		        to_char(startdate, 'yyyy-mm-dd') startdate
+		      , to_char(enddate, 'yyyy-mm-dd') enddate
+		      , limittime
+		      , FLAG
+		      , testname
+		      , testid
+		      , teacherid
+		      , subjectname
+		      , subjectid
+		      , teachername
+		      , class_num
+		      , avg(japsum) avg_score
+  		from
+      		(select 
+		              startdate
+		            , enddate
+		            , t.limittime
+		            , su.FLAG
+		            , testname
+		            , t.test_seq testid
+		            , su.subjectname
+		            , su.subject_seq subjectid
+		            , te.id teacherid
+		            , te.name teachername
+		            , su.class_num
+		            , (ms.WRITE + ms.SPEECH + ms.INTERVIEW)/3 japsum
+       		 from
+		              teacher te
+		            , subject su
+		            , test t
+		            , MONTHSCORE ms
+            
+      		 where
+		                te.ID = su.ID
+		            and su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		            and t.TEST_SEQ = ms.TEST_SEQ(+)
+		            and su.FLAG = #{flag}
+		            and su.class_num like '%'||#{class_num}||'%'
+		            and su.FIELD = '일본어'
+		            and t.testname like '%'||'월말평가'||'%'
+      		)
+		group by 
+	       		   startdate, enddate, FLAG, testname, testid, teacherid, teachername, class_num, limittime
+	       		 , subjectname, subjectid
+	    order by class_num, startdate desc
+	</select>
+	<!-- 각 반의 학생을 가져온다. -->
+	<select id="getStudentOfMonth" parameterType="TestSubTea" resultType="TestSubTea">
+		select
+		        st.id 
+		      , st.name
+		      , te.name teachername
+		      , te.id teacherid
+		      , t.testname
+		      , t.TEST_SEQ testid
+		      , t.FLAG
+		      , su.CLASS_NUM
+		  from
+		        teacher te
+		      , subject su
+		      , student st  
+		      , test t
+		      , MONTHSCORE ms
+		 where
+		          te.ID = su.ID
+		      and su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		      and t.TEST_SEQ = ms.TEST_SEQ(+)
+		      and st.JAPANESE = su.CLASS_NUM
+		      and st.FLAGNUM = su.FLAG
+		      and su.CLASS_NUM = #{class_num}
+		      and su.FLAG = #{flag}
+		      and t.TEST_SEQ = #{testid}
+	</select>
+	<!-- 성적을 입력한다. -->
+	<insert id="insertGradeMonth" parameterType="TestSubTea">
+		insert into monthscore values(SEQ_monthscore_monthscore_seq.nextval, #{testid}, #{id}, #{write}, #{interview}, #{speech})
+	</insert>
+	<!-- 성적수정폼을 위해 -->
+	<select id="getScoreOfMonth" parameterType="TestSubTea" resultType="TestSubTea">
+		select
+		        st.id
+		      , st.name
+		      , write
+		      , speech
+		      , interview
+		      , su.FLAG
+		      , su.CLASS_NUM
+		      , t.test_seq testid
+		      , t.testname
+		  from
+		        student st
+		      , test t
+		      , subject su
+		      , MONTHSCORE ms
+		 where
+		          st.JAPANESE = su.CLASS_NUM
+		      and st.FLAGNUM = su.FLAG
+		      and su.SUBJECT_SEQ = t.SUBJECT_SEQ
+		      and t.TEST_SEQ = ms.TEST_SEQ
+		      and ms.ID = st.ID
+		      and su.FLAG = #{flag}
+		      and t.TEST_SEQ = #{testid}
+	</select>
+	<!-- 성적을 수정한다. -->
+	<update id="updateGradeMonth" parameterType="TestSubTea">
+		update monthscore set write = #{write}, interview = #{interview}, speech = #{speech} where test_seq = #{testid} and id = #{id}
+	</update>
+	<!-- 기수의 학생의 수를 가져온다. -->
+	<select id="getNumOfFlag" parameterType="String" resultType="int">
+		select count(*) from student where flagnum = #{flag}
+	</select>
+	<!-- 해당년도에 해당달의 시험이 있는지 확인한다. -->
+	<select id="getAlreadyMonth" parameterType="TestSubTea" resultType="TestSubTea">
+		select * from test where testname = #{testname} and  substr(to_char(startdate, 'yyyy-mm-dd'), 1, 7) = substr(#{startdate}, 1, 7)
+	</select>
+</mapper>
+

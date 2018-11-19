@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="test" namespace="/test" extends="default">
+	
+		<!-- 과목별시험등록 -->
+		<action name="testItUi" class="test.action.TestAction" method="testItUi">
+			<result>/jsp/test/itsubject.jsp</result>
+		</action>
+		<action name="searchSubject" class="test.action.TestAction" method="searchSubject">
+			<result type="json"></result>
+		</action>
+		<action name="insertSubjectForm" class="test.action.TestAction" method="insertSubjectForm">
+			<result>/jsp/test/subject/insertsubjectform.jsp</result>
+		</action>
+		<action name="insertTest" class="test.action.TestAction" method="insertTest">
+			<result type="json"></result>
+		</action>
+		<action name="deleteTest" class="test.action.TestAction" method="deleteTest">
+			<result>/jsp/test/itsubject.jsp</result>
+		</action>
+		<action name="editSubjectForm" class="test.action.TestAction" method="editSubjectForm">
+			<result>/jsp/test/subject/editSubjectForm.jsp</result>
+		</action>
+		<action name="editTest" class="test.action.TestAction" method="editTest">
+			<result type="json"></result>
+		</action>
+		<action name="insertGradeForm" class="test.action.TestAction" method="insertGradeForm">
+			<result>/jsp/test/subject/gradesubjectform.jsp</result>
+		</action>
+		<action name="insertSubjectGrade" class="test.action.TestAction" method="insertSubjectGrade">
+			<result type="json"></result>
+		</action>
+		<action name="editGradeForm" class="test.action.TestAction" method="editGradeForm">
+			<result>/jsp/test/subject/editgradeform.jsp</result>
+		</action>
+		<action name="eidtSubjectGrade" class="test.action.TestAction" method="eidtSubjectGrade">
+			<result type="json"></result>
+		</action>
+		
+		
+		<!-- 역량평가시험등록 -->
+		<action name="itCapacity" class="test.action.TestAction" method="itCapacity">
+			<result>/jsp/test/itcapacity.jsp</result>
+		</action>
+		<action name="capacityInsertForm" class="test.action.TestAction" method="capacityInsertForm">
+			<result>/jsp/test/capacity/capacityinsertform.jsp</result>
+		</action>
+		<action name="insertCapacityTest" class="test.action.TestAction" method="insertCapacityTest">
+			<result type="json"></result>
+		</action>
+		<action name="editCapacityForm" class="test.action.TestAction" method="editCapacityForm">
+			<result>/jsp/test/capacity/editcapacity.jsp</result>
+		</action>
+		<action name="editCapacityTest" class="test.action.TestAction" method="editCapacityTest">
+			<result type="json"></result>
+		</action>
+		<action name="insertCapacityGradeForm" class="test.action.TestAction" method="insertCapacityGradeForm">
+			<result>/jsp/test/capacity/insertgradeform.jsp</result>
+		</action>
+		<action name="deleteCapacityTest" class="test.action.TestAction" method="deleteCapacityTest">
+			<result>/jsp/test/itcapacity.jsp</result>
+		</action>
+		<action name="insertCapacityGrade" class="test.action.TestAction" method="insertCapacityGrade">
+			<result type="json"></result>
+		</action>
+		<action name="editCapacityGradeForm" class="test.action.TestAction" method="editCapacityGradeForm">
+			<result>/jsp/test/capacity/editCapacityGradeForm.jsp</result>
+		</action>
+		<action name="editCapacityGrade" class="test.action.TestAction" method="editCapacityGrade">
+			<result type="json"></result>
+		</action>
+		<action name="showStudentCapacityGrade" class="test.action.TestAction" method="showStudentCapacityGrade">
+			<result type="json"></result>
+		</action>
+		
+		<!-- 일본어 매일시험 -->
+		<action name="japDaily" class="test.action.TestAction" method="japDaily" >
+			<result>/jsp/test/japdaily.jsp</result>
+		</action>
+		<action name="dailyInsertForm" class="test.action.TestAction" method="dailyInsertForm">
+			<result>/jsp/test/daily/insertdailyform.jsp</result>
+		</action>
+		<action name="insertDailyTest" class="test.action.TestAction" method="insertDailyTest">
+			<result type="json"></result>
+		</action>
+		<action name="insertGradeOfDailyForm" class="test.action.TestAction" method="insertGradeOfDailyForm">
+			<result>/jsp/test/daily/insertgradeofdailyform.jsp</result>
+		</action>
+		<action name="insertGradeOfDaily" class="test.action.TestAction" method="insertGradeOfDaily">
+			<result type="json"></result>
+		</action>
+		<action name="editGradeOfDailyForm" class="test.action.TestAction" method="editGradeOfDailyForm">
+			<result>/jsp/test/daily/editgradeofdaily.jsp</result>
+		</action>
+		<action name="editDailyGrade" class="test.action.TestAction" method="editDailyGrade">
+			<result type="json"></result>
+		</action>
+		<action name="deleteDaily" class="test.action.TestAction" method="deleteDaily">
+			<result>/jsp/test/japdaily.jsp</result>
+		</action>
+		<action name="showStudentDailyGrade" class="test.action.TestAction" method="showStudentDailyGrade">
+			<result type="json"></result>
+		</action>
+		
+		<!-- 일본어 월말평가 -->
+		<action name="japMonth" class="test.action.TestAction" method="japMonth">
+			<result>/jsp/test/japmonth.jsp</result>
+		</action>
+		<action name="insertMonthForm" class="test.action.TestAction" method="insertMonthForm">
+			<result>/jsp/test/month/insertmonthform.jsp</result>
+		</action>
+		<action name="insertMonthTest" class="test.action.TestAction" method="insertMonthTest">
+			<result type="json"></result>
+		</action>
+		<action name="editMonthForm" class="test.action.TestAction" method="editMonthForm">
+			<result>/jsp/test/month/editmonthform.jsp</result>
+		</action>
+		<action name="editMonthTest" class="test.action.TestAction" method="editMonthTest">
+			<result type="json"></result>
+		</action>
+		<action name="deleteMonth" class="test.action.TestAction" method="deleteMonth">
+			<result>/jsp/test/japmonth.jsp</result>
+		</action>
+		<action name="searchMonth" class="test.action.TestAction" method="searchMonth">
+			<result type="json"></result>
+		</action>
+		<action name="insertMonthGradeForm" class="test.action.TestAction" method="insertMonthGradeForm">
+			<result>/jsp/test/month/insertmonthgradeform.jsp</result>
+		</action>
+		<action name="insertMonthGrade" class="test.action.TestAction" method="insertMonthGrade">
+			<result type="json"></result>
+		</action>
+		<action name="editMonthGradeForm" class="test.action.TestAction" method="editMonthGradeForm">
+			<result>/jsp/test/month/editmonthgradeform.jsp</result>
+		</action>
+		<action name="eidtMonthGrade" class="test.action.TestAction" method="eidtMonthGrade">
+			<result type="json"></result>
+		</action>
+	</package>
+</struts>

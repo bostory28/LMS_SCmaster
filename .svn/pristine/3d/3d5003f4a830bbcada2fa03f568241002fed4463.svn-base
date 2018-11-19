@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+	<struts>
+	<package name="member" namespace="/member" extends="default">
+		<action name="memberJoinForm">
+			<result>/jsp/member/memberJoin.jsp</result>
+		</action>
+		<action name="memberJoin" class="member.memberAction">
+			<result type="redirect">/index.action</result>
+		</action>
+		<action name="loginForm">
+			<result>/jsp/member/beforeMemberLogin.jsp</result>
+		</action>
+		<action name="loginForm2" class="member.memberAction" method="loginForm2">
+			<result>/jsp/member/memberLogin.jsp</result>
+		</action>
+		<action name="login" class="member.memberAction" method="login">
+			<result type="redirectAction">
+				<param name="actionName">index</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="login">/jsp/member/memberLoginFailed.jsp</result>
+		</action>
+		<action name="logout" class="member.memberAction" method="logout">
+			<result type="redirect">/index.action</result>
+		</action>
+		<action name="mypage_details" class="member.memberAction" method="mypageForm">
+			<result>/jsp/member/mypage_details.jsp</result>
+		</action>
+		<action name="profileUpdate" class="member.memberAction" method="profileUpdate">
+			<result>/jsp/member/mypage_details.jsp</result>
+		</action>
+		<action name="profileUpdateT" class="member.memberAction" method="profileUpdateT">
+			<result>/jsp/member/mypage_details.jsp</result>
+		</action>
+		<action name="memberManagement" class="member.memberAction" method="memberManagementForm">
+			<result>/jsp/member/memberManagement.jsp</result>
+		</action>
+		<action name="teacherConfirm" class="member.memberAction" method="teacherConfirm">
+			<result type="redirectAction">
+				<param name="actionName">memberManagement</param>
+				<param name="namespace">/member</param>
+			</result>
+		</action>
+		<action name="studentConfirm" class="member.memberAction" method="studentConfirm">
+			<result type="redirectAction">
+				<param name="actionName">memberManagement</param>
+				<param name="namespace">/member</param>
+			</result>
+		</action>
+		<action name="studentConfirmAndUpdate" class="member.memberAction" method="studentConfirmAndUpdate">
+			<result type="redirectAction">
+				<param name="actionName">memberManagement</param>
+				<param name="namespace">/member</param>
+			</result>
+		</action>
+		<action name="teacherconfirmCancel" class="member.memberAction" method="teacherconfirmCancel">
+			<result type="redirectAction">
+				<param name="actionName">memberManagement</param>
+				<param name="namespace">/member</param>
+			</result>
+		</action>
+		<action name="studentconfirmCancel" class="member.memberAction" method="studentconfirmCancel">
+			<result type="redirectAction">
+				<param name="actionName">memberManagement</param>
+				<param name="namespace">/member</param>
+			</result>
+		</action>
+		<!-- 한명의학생정보가져오기(tooltip용)  -->
+		<action name="getOneofStudent" class="member.memberAction" method="getOneofStudent">
+			<result type="json"/>
+		</action>
+		<!-- ID체크를 위한 폼  -->
+		<action name="goIdCheckForm">
+			<result>/jsp/member/idCheck.jsp</result>
+		</action>
+		<!--id중복체크  -->
+		<action name="idCheck" class="member.memberAction" method="idCheck">
+			<result>/jsp/member/idCheck.jsp</result>
+		</action>
+		<!--사진변경을위한업데이트폼  -->
+		<action name="propicUpdateForm">
+			<result>/jsp/member/propicUpdateForm.jsp</result>
+		</action>
+		<!--사진변경을위한업데이트  -->
+		<action name="propicUpdate" class="member.memberAction" method="propicUpdate">
+			<result>/jsp/member/afterPropicUpdate.jsp</result>
+		</action>
+		<!--성적조회Form-->
+		<action name="myScoreViewForm" class="member.memberAction" method="myScoreViewForm">
+			<result>/jsp/test/myScoreView.jsp</result>
+			<result name="login" type="redirect">/index.jsp</result>
+		</action>
+		<!-- 성적조회페이지 뷰 -->
+		<action name="myScoreView" class="member.memberAction" method="myScoreView">
+			<result type="json"/>
+		</action>
+		<!-- 일본어성적조회 뷰 -->
+		<action name="myScoreViewJ" class="member.memberAction" method="myScoreViewJ">
+			<result type="json"/>
+		</action>
+		<!-- 필터링된 학생리스트//성적조회용  -->
+	
+	</package>
+	</struts>

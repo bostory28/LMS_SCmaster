@@ -1,0 +1,306 @@
+package member;
+
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+
+
+
+
+
+
+
+import vo.Admin;
+import vo.FlagVO;
+import vo.JapAvgVO;
+import vo.OneofTestScore;
+import vo.Student;
+import vo.StudentListForTeacherVO;
+import vo.Subject;
+import vo.Teacher;
+import common.MybatisConfig;
+
+public class memberDAO {
+	SqlSessionFactory sqlSessionFactory = MybatisConfig.getSqlSessionFactory();
+	SqlSession sqlSession;
+	
+	Student student;
+	Teacher teacher;
+	Admin admin;
+	Subject subject;
+	List<Subject> subjectList;
+	List<Student> studentList;
+	List<Teacher> teacherList;
+	List<Teacher> teacherListnotConfirmed;
+	List<Student> studentListnotConfirmed;
+	List<FlagVO> flagList;
+	List<StudentListForTeacherVO> studentListForTeacher;
+	public void memberJoin(Student student) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.insert("member.memberJoin",student);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	//id중복체크
+	public Student idCheck(String id){
+		sqlSession = sqlSessionFactory.openSession();
+		student = sqlSession.selectOne("member.getStudent",id);
+		System.out.println("id중복체크 dao: "+student);
+		sqlSession.close();
+		return student;
+	}
+	public Student studentLogin(HashMap<String, Object> hashmap) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		student = sqlSession.selectOne("member.studentLogin", hashmap);
+		sqlSession.close();
+		return student;
+	}
+	public Teacher teacherLogin(HashMap<String, Object> hashmap) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		teacher = sqlSession.selectOne("member.teacherLogin", hashmap);
+		sqlSession.close();
+		return teacher;
+	}
+	public Admin adminLogin(HashMap<String, Object> hashmap) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		admin = sqlSession.selectOne("member.adminLogin", hashmap);
+		sqlSession.close();
+		return admin;
+	}
+	public void profileUpdate(Student student) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.profileUpdate",student);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void profileUpdateT(Teacher teacher) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.profileUpdateT",teacher);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void propicUpdate(String id,String propic){//학생의프로필사진업뎃
+		sqlSession = sqlSessionFactory.openSession();
+		HashMap<String,Object> map = new HashMap<String,Object>();
+		map.put("id", id); map.put("propic", propic);
+		sqlSession.update("member.propicUpdate",map);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void propicUpdateT(String id,String propic){//선생님의프로필사진업뎃
+		sqlSession = sqlSessionFactory.openSession();
+		HashMap<String,Object> map = new HashMap<String,Object>();
+		map.put("id", id); map.put("propic", propic);
+		sqlSession.update("member.propicUpdateT",map);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void avapicUpdate(String id,String avapic){//학생의아바타사진업뎃
+		sqlSession = sqlSessionFactory.openSession();
+		HashMap<String,Object> map = new HashMap<String,Object>();
+		map.put("id", id); map.put("propic", avapic);
+		sqlSession.update("member.avapicUpdate",map);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void avapicUpdateT(String id,String avapic){//선생님의아바타사진업뎃
+		sqlSession = sqlSessionFactory.openSession();
+		HashMap<String,Object> map = new HashMap<String,Object>();
+		map.put("id", id); map.put("propic", avapic);
+		sqlSession.update("member.avapicUpdateT",map);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public List<Subject> myStudyList(String id) throws Exception{
+		System.out.println("dao1");
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("dao2");
+		subjectList= sqlSession.selectList("member.myStudyList",id);
+		System.out.println("dao3");
+		sqlSession.commit();
+		sqlSession.close();
+		System.out.println("dao4");
+		return subjectList; 
+	}
+	public List<Student> studentListforConfirm() throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		studentListnotConfirmed=sqlSession.selectList("member.studentListforConfirm");
+		sqlSession.close();
+		return studentListnotConfirmed;
+	}
+	public List<Teacher> teacherListforConfirm() throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		teacherListnotConfirmed=sqlSession.selectList("member.teacherListforConfirm");
+		sqlSession.close();
+		return teacherListnotConfirmed;
+	}
+	public void teacherConfirm(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.teacherConfirm",id);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void studentConfirm(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.studentConfirm",id);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void teacherConfirmCancel(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.teacherConfirmCancel",id);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void studentConfirmCancel(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.update("member.studentConfirmCancel",id);
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	public void studentConfirmAndUpdate(Student student) throws Exception{
+		System.out.println("학생회원의변경과승인dao1");
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("학생회원의변경과승인dao2");
+		sqlSession.update("member.studentConUp",student);
+		System.out.println("학생회원의변경과승인dao3");
+		sqlSession.commit();
+		sqlSession.close();
+		System.out.println("학생회원의변경과승인dao4");
+	}
+	public List<Teacher> teacherList() throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		teacherList=sqlSession.selectList("member.teacherList");
+		sqlSession.close();
+		return teacherList;
+	}
+	public List<Student> studentList() throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		studentList=sqlSession.selectList("member.studentList");
+		sqlSession.commit();
+		sqlSession.close();
+		return studentList;
+	}
+	public Student getStudent(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		student = sqlSession.selectOne("member.getStudent", id);
+		System.out.println("한명의학생정보(dao): "+student);
+		sqlSession.close();
+		return student;
+	}
+	public Teacher getTeacher(String id) throws Exception {
+		sqlSession = sqlSessionFactory.openSession();
+		teacher = sqlSession.selectOne("member.getTeacher", id);
+		sqlSession.close();
+		return teacher;
+	}
+	/*****************************성적조회페이지*****************************/
+	OneofTestScore oneofTestScore;
+	OneofTestScore scoreITRank;
+	OneofTestScore scoreJapRank;
+	List<OneofTestScore> scoreList;
+	List<OneofTestScore> scoreList2;
+	List<OneofTestScore> scoreListJ;
+	List<OneofTestScore> scoreListJ2;
+	JapAvgVO japAvgVO;
+	public List<OneofTestScore> getOneofTestScore(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("한명의성적정보 dao1");
+		scoreList = sqlSession.selectList("member.getScore", id);
+		System.out.println("한명의성적정보 dao2");
+		sqlSession.close();
+		return scoreList;
+	}//역량평가정보를별도로가져옴
+	public List<OneofTestScore> getOneofTestScore2(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("한명의역량정보 dao1");
+		scoreList2 = sqlSession.selectList("member.getScore2", id);
+		System.out.println("한명의역량정보 dao2");
+		scoreITRank= sqlSession.selectOne("member.getITRank",id);
+		sqlSession.close();
+		return scoreList2;
+	}
+	public OneofTestScore getOneofITRank(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("일명의랭크dao");
+		scoreITRank= sqlSession.selectOne("member.getITRank",id);
+		System.out.println("일명의랭크dao2");
+		sqlSession.close();
+		return scoreITRank;
+	}
+	public List<OneofTestScore> getOneofTestScoreJ(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("한명의성적정보 dao1J");
+		scoreListJ = sqlSession.selectList("member.getScoreJ", id);
+		System.out.println("한명의성적정보 dao2J");
+		sqlSession.close();
+		return scoreListJ;
+	}//일본어시험정보
+	public List<OneofTestScore> getOneofTestScoreJ2(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("한명의성적정보 dao1J월말");
+		scoreListJ2 = sqlSession.selectList("member.getScoreJ2", id);
+		System.out.println("일본어성적dao :"+scoreListJ2);
+		System.out.println("한명의성적정보 dao2J월말");
+		sqlSession.close();
+		return scoreListJ2;
+	}//일본어월말시험정보
+	public JapAvgVO getOneofTestScoreJ3(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("한명의성적정보 dao1J3");
+		japAvgVO = sqlSession.selectOne("member.getScoreJ3", id);
+		System.out.println("한명의성적정보 dao2J3");
+		sqlSession.close();
+		return japAvgVO;
+	}//일본어월말평가석차
+	public OneofTestScore getOneofJapRank(String id) throws Exception{
+		sqlSession = sqlSessionFactory.openSession();
+		System.out.println("일명의Jap랭크dao");
+		scoreJapRank= sqlSession.selectOne("member.getJapRank",id);
+		System.out.println("일명의Jap랭크dao2");
+		sqlSession.close();
+		return scoreJapRank;
+	}
+	/*public List<Student> getStudentListForViewScore(String flag,String name){//리턴과 매퍼서받는 객체가 동일치않다체크
+		sqlSession = sqlSessionFactory.openSession();
+		HashMap<String,String> hashmap =new HashMap<String,String>();
+		hashmap.put("flag", flag);hashmap.put("name", name);
+		System.out.println("필터링 된 학생리스트:성적조회용 dao1");
+		student = sqlSession.selectOne("member.getStudentForViewScore",name);
+		sqlSession.commit();
+		sqlSession.close();
+		System.out.println(flag+" "+name+" dao");
+		System.out.println("dao"+student);
+		return studentList;
+	}*/
+	//기수 테이블의 정보 가져온다
+	public List<FlagVO> getFlags(){
+		sqlSession = sqlSessionFactory.openSession();
+		flagList = sqlSession.selectList("member.getFlags");
+		sqlSession.commit();
+		sqlSession.close();
+		System.out.println("기수 정보 불러옴 dao");
+		return flagList;
+	}
+	//선생님의 강의를 수강 중인 학생들의 명단을 가져온다
+	public List<StudentListForTeacherVO> getSListForTeacher(String id){
+		sqlSession = sqlSessionFactory.openSession();
+		studentListForTeacher = sqlSession.selectList("member.getSListForTeacher",id);
+		sqlSession.commit();
+		sqlSession.close();
+		System.out.println("선생님의 강의를 수강 중인 학생들의 명단 dao");
+		return studentListForTeacher;
+	}
+	//수강 중인 학생들의 정보를 툴팁에 보여주기 위해 리스트로 불러온다
+	public List<Student> getStudentsForTooltip(String id){
+		sqlSession = sqlSessionFactory.openSession();
+		studentList = sqlSession.selectList("member.getStudentForTooltip",id);
+		sqlSession.commit();
+		sqlSession.close();
+		return studentList;
+	}
+}

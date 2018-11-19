@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	<insert id="memberJoin" parameterType="student">
+		insert into student(id,password,name,phone,email,birth,
+							eip,jlpt,propic,type)
+		values(#{id},#{password},#{name},#{phone},#{email},#{birth},
+			   #{eip},#{japanese},#{propic},#{type})
+	</insert>
+	<select id="studentLogin" parameterType="hashmap" resultType="student">
+		select * from student
+		where id=#{id} and password=#{password}
+	</select>
+	<select id="teacherLogin" parameterType="hashmap" resultType="teacher">
+		select * from teacher
+		where id=#{id} and password=#{password}
+	</select>
+	<select id="adminLogin" parameterType="hashmap" resultType="admin">
+		select * from admin
+		where id=#{id} and password=#{password}
+	</select>
+	<update id="profileUpdate" parameterType="student">
+		 update student set 
+		 email=#{email},phone=#{phone},eip=#{eip},jlpt=#{jlpt} 
+		 where id=#{id}
+	</update>
+	<update id="profileUpdateT" parameterType="teacher">
+		 update teacher set 
+		 email=#{email},phone=#{phone} 
+		 where id=#{id}
+	</update>
+	<update id="propicUpdate" parameterType="hashmap">
+		update student set propic=#{propic}
+		where id=#{id}
+	</update>
+	<update id="propicUpdateT" parameterType="hashmap">
+		update teacher set propic=#{propic}
+		where id=#{id}
+	</update>
+	<update id="avapicUpdate" parameterType="hashmap">
+		update student set avapic=#{avapic}
+		where id=#{id}
+	</update>
+	<update id="avapicUpdateT" parameterType="hashmap">
+		update teacher set avapic=#{avapic}
+		where id=#{id}
+	</update>
+	<update id="avapicUpdateA" parameterType="hashmap">
+		update admin set avapic=#{avapic}
+		where id=#{id}
+	</update>
+	<select id="myStudyList" parameterType="String" resultType="subject">
+		select * from subject
+		where subject_seq in(select subject_seq from register where id=#{id}) 
+		and subjectname not like '%평가%'
+	</select>
+	<select id="studentListforConfirm" resultType="student">
+		select * from student where confirm=0
+	</select>
+	<select id="teacherListforConfirm" resultType="teacher">
+		select * from teacher where confirm=0
+	</select>
+	<select id="studentList" resultType="student">
+		select * from student
+	</select>
+	<select id="teacherList" resultType="teacher">
+		select * from teacher
+	</select>
+	<update id="teacherConfirm" parameterType="String">
+		update teacher set confirm=1
+		where id=#{id}
+	</update>
+	<update id="studentConfirm" parameterType="String">
+		update student set confirm=1
+		where id=#{id}
+	</update>
+	<update id="teacherConfirmCancel" parameterType="String">
+		update teacher set confirm=0
+		where id=#{id}
+	</update>
+	<update id="studentConfirmCancel" parameterType="String">
+		update student set confirm=0
+		where id=#{id}
+	</update>
+	<update id="studentConUp" parameterType="student">
+		update student set 
+		flagnum=#{flagnum},class_num=#{class_num},japanese=#{japanese},confirm=1
+		where id=#{id}
+	</update>
+	<select id="getStudent" parameterType="String" resultType="student">
+		select * from student where id=#{id}
+	</select>
+	<select id="getTeacher" parameterType="String" resultType="teacher">
+		select * from teacher where id=#{id}
+	</select>
+	<select id="getAdmin" parameterType="String" resultType="admin">
+		select * from admin where id=#{id}
+	</select>
+	<!--기수 테이블의 정보를 가져온다  -->
+	<select id="getFlags" resultType="Flag">
+		select * from flag
+	</select>
+	<!-- 한명의 IT시험성적 정보를 가져온다 --> <!-- and field='IT' -->
+	<select id="getScore" parameterType="String" resultType="oneoftestScore">
+		select score,testname,startdate,type from test,score,subject
+		where test.test_seq=score.test_seq and test.subject_seq=subject.subject_seq and score.id=#{id}
+		and testname not like '%역량평가%' and subject.field='IT' 
+	</select>
+	<!-- 한명의 IT역량평가 성적정보를 가져온다  --><!--  test테이블의 type컬럼은 온/오프라인시험의여부 -->
+	<select id="getScore2" parameterType="String" resultType="oneoftestScore">
+		select score,testname,startdate from test,score,subject
+		where test.test_seq=score.test_seq and test.subject_seq=subject.subject_seq and score.id=#{id}
+		and testname like '%역량평가%' and subject.field='IT'
+	</select>
+	<!-- 한명의 IT역량평가의 평균과 석차를 구한다 -->
+	<select id="getITRank" parameterType="String" resultType="oneoftestScore">
+		select id,scoreAvg,rank from (select score.id id,avg(score) scoreAvg,rank() over(order by avg(score)) rank from test,score,subject
+		where test.test_seq=score.test_seq and test.subject_seq=subject.subject_seq
+		and testname like '%역량평가%' and subject.field='IT'
+		group by score.id) where id=#{id}
+	</select>
+	<!-- 한명의 일본어시험성적 정보를 가져온다 --><!--  and type='일본어' -->
+	<select id="getScoreJ" parameterType="String" resultType="oneoftestScore">
+		select score,testname,startdate from test,score,subject
+		where test.test_seq=score.test_seq and test.subject_seq=subject.subject_seq and score.id=#{id}
+		and testname not like '%월말평가%' and subject.field='일본어' 
+	</select>
+	<!-- 한명의 일본어 월말평가 성적정보를 가져온다  --><!-- and type='일본어' -->
+	<select id="getScoreJ2" parameterType="String" resultType="oneoftestScore">
+		select write,interview,speech,testname,startdate from test,monthscore,subject
+		where test.test_seq=monthscore.test_seq and test.subject_seq=subject.subject_seq and monthscore.id=#{id}
+	    and testname like '%월말평가%' and subject.field='일본어' 
+	</select>
+	<!-- 한명의 일본어 역량평가의 평균과 석차를 구한다 -->
+	<select id="getJapRank" parameterType="String" resultType="oneoftestScore">
+		select monthscore.id id,avg(write) writeAvg,avg(interview) interviewAvg,avg(speech) speechAvg,rank() over(order by avg(write+interview+speech)) japrank from test,monthscore,subject
+		where test.test_seq=monthscore.test_seq and test.subject_seq=subject.subject_seq 
+		and testname like '%월말평가%' and subject.field='일본어' and monthscore.id=#{id}
+		group by monthscore.id
+	</select>
+	<!-- 한명의 일본어 카타카나,작문,한자,읽기 평균을 가져온다 (차트에더함) -->
+	<select id="getScoreJ3" parameterType="String" resultType="japAvgVO">
+		select * from 
+		(select avg(score) "katakanaAvg" from score where score.test_seq in(select test_seq from test where testname in('카타카나')) and id=#{id}),
+		(select avg(score) "kanjiAvg" from score where score.test_seq in(select test_seq from test where testname in('한자')) and id=#{id}),
+		(select avg(score) "writingAvg" from score where score.test_seq in(select test_seq from test where testname in('작문')) and id=#{id}),
+		(select avg(score) "readingAvg" from score where score.test_seq in(select test_seq from test where testname in('읽기')) and id=#{id})
+	</select>
+	<!-- 선생님의 수강 중인 학생들의 명단 -->
+	<select id="getSListForTeacher" parameterType="String" resultType="getSListForTeacher">
+		select subject.id,subject.subject_seq,register.id "studentId"
+		from subject,register
+		where subject.id=#{id} and register.subject_seq=subject.subject_seq
+	</select>
+	<select id="getStudentForTooltip" parameterType="String" resultType="student">
+		select student.*,getsubject.subjectname subjectname from student,
+		   (
+			select register.id studentId,subjectname			
+			from subject,register
+			where subject.id=#{id} and register.subject_seq=subject.subject_seq
+		   ) getsubject
+        where student.id 
+		 in(
+			select register.id "studentId"			
+			from subject,register
+			where subject.id=#{id} and register.subject_seq=subject.subject_seq
+		   )
+		   and student.id=getsubject.studentId	
+	</select>
+</mapper>

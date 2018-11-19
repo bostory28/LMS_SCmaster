@@ -1,0 +1,11 @@
+###############################
+struts.devMode=true
+struts.configuration.xml.reload=true
+###############################
+
+struts.i18n.encoding=utf-8
+struts.multipart.saveDir=/temp
+struts.multipart.maxSize =20000000
+
+#user.properties
+struts.custom.i18n.resources=user

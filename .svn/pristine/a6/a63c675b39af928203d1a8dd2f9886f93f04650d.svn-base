@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+	<struts>
+	<package name="trouble" namespace="/trouble" extends="default">
+		<!-- 테스트 로그인액션 -->		
+		<action name="troubleWriteForm" class="trouble.troubleAction" method="troubleWrite">
+			 <result>/jsp/trouble/troubleWriteForm.jsp</result>
+		</action>
+		<action name="troubleInsert" class="trouble.troubleAction" method="troubleInsert">
+			<result type="redirect">/index.action</result>
+		</action>
+		<action name="troubleList" class="trouble.troubleAction" method="troubleLists">
+			<result>/jsp/trouble/troubleList.jsp</result>		
+		</action>
+		<action name="troubleRead" class="trouble.troubleAction" method="troubleRead">
+			<result>/jsp/trouble/troubleRead.jsp</result>
+		</action>
+		<action name="troubleAnswer" class="trouble.troubleAction" method="troubleAnwer">
+			<result type="redirect">troubleList.action</result>
+
+		</action>
+		<action name="troubleStudent" class="trouble.troubleAction" method="troubleStudent">
+			<result>/jsp/trouble/troubleStudent.jsp</result>
+		</action>
+		<action name="troubleAdmin" class="trouble.troubleAction" method="troubleAdmin">
+			<result>/jsp/trouble/troubleAdmin.jsp</result>
+		</action>
+		<action name="answerStudent" class="trouble.troubleAction" method="answerStudent">
+			<result>/jsp/trouble/answerStudent.jsp</result>
+		</action>
+		
+
+
+
+
+	</package>
+	</struts>

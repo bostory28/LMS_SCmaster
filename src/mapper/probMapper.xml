@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="prob">
+	<!-- 객관식 문제 넣기 -->
+	<insert id="insertProb" parameterType="problem">
+	insert 
+	 into 
+     problem(prob_id,prob_type,probtext,obj1,obj2,obj3,obj4,answer,explanation,teacher_id,difficulty)
+       values(
+         SEQ_problem_prob_id.nextval	
+		,#{prob_type}			
+		,#{probtext}
+		,#{obj1}
+		,#{obj2}
+		,#{obj3}
+		,#{obj4}
+		,#{answer}
+		,#{explanation}
+		,#{teacher_id}
+		,#{difficulty}
+  		)
+  		
+  
+	</insert>
+	
+	
+	<!-- 주관식 문제 넣기 -->
+	<insert id="insertProb2" parameterType="problem">
+	insert 
+	 into 
+     problem(prob_id,prob_type,probtext,answer,explanation,teacher_id,difficulty)
+       values(
+         SEQ_problem_prob_id.nextval	
+		,#{prob_type}			
+		,#{probtext}
+		,#{answer}
+		,#{explanation}
+		,#{teacher_id}
+		,#{difficulty}
+  		)
+  		
+  
+	</insert>
+	
+	<!-- 주관식 문제 넣기 -->
+	<select id="problist" resultType="problem">
+		select * from problem
+		order by inputdate desc
+	
+	
+	</select>
+	
+	<!-- 문제하나 들고오기 -->
+	<select id="getProb" parameterType="int" resultType="problem">
+		select * from problem
+		where prob_id = #{prob_id}
+	</select>
+	
+	<!-- 시험문제 내기 -->
+	<insert id="submitTest" parameterType="problist">
+	insert 
+	 into 
+     prob_list(prob_list_num,test_seq,prob_id)
+       values(
+       	SEQ_prob_list_prob_list_num.nextval
+        ,(select max(test_seq) from test)
+        
+		,#{prob_id}
+  	)
+  		
+  
+	</insert>
+	
+	
+	<!-- 문제하나 들고오기 -->
+	<select id="getTest" parameterType="int" resultType="problist">
+		select * from prob_list
+		where test_seq = #{test_seq}
+	</select>
+	
+	
+	<insert id="createTest" parameterType="Test">
+	insert into 
+	test(test_seq,subject_seq,testname,limittime,type,startdate,enddate,flag )
+	
+	values(SEQ_test_test_seq.nextval
+			,#{subject_seq}
+			,#{testname}
+			,#{limittime}
+			,#{type}
+			,#{startdate}
+			,#{enddate}
+			,#{flag}
+	)
+		
+  
+  
+	</insert>
+	<!-- TESTSEQ가져오기 -->
+	<select id="findTestseq" parameterType="int"  resultType="int">
+		select test_seq
+		from test
+		where subject_seq = #{subject_seq} and type='YES'
+	
+	
+	</select>
+	
+	
+	<insert id="insertScore" parameterType="score">
+		insert into score(score_seq,test_seq,id,score)
+		
+		values(SEQ_score_score_seq.nextval ,#{test_seq},#{id},#{score})
+	
+	
+	</insert>	
+	
+
+	
+	
+</mapper>

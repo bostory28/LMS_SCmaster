@@ -1,0 +1,129 @@
+package trouble;
+
+import java.util.List;
+import java.util.Map;
+
+import vo.Student;
+import vo.Teacher;
+import vo.Trouble;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+
+public class troubleAction extends ActionSupport {
+	String contents;
+	String title;
+	String today;
+	int readKey;
+	List<Trouble>troubleLists;
+	Trouble trou;
+	int counsel_seq;
+	String answer;
+	String teacherid;
+	List<Teacher>teacherLists;
+	public String troubleWrite(){
+		teacherLists=new troubleDao().teacherLists();
+		return SUCCESS;
+	}
+	public String troubleInsert(){
+		ActionContext context=ActionContext.getContext();
+		Map<String, Object>session=context.getSession();
+		
+		Student stu=(Student) session.get("userSign");
+		String studentid=stu.getId();
+		Trouble tro=new Trouble(0, studentid, title, contents, today, teacherid);
+		System.out.println(tro);
+		new troubleDao().troubleInsert(tro);
+		return SUCCESS;
+	}
+	public String troubleAnwer(){
+		System.out.println("다훈아");
+		System.out.println(answer);
+		System.out.println(counsel_seq);
+		System.out.println(counsel_seq);
+		
+		return SUCCESS;
+	}
+	public String troubleLists(){
+		troubleLists=new troubleDao().troubleLists();
+		return SUCCESS;
+	}
+	public String troubleRead(){
+		trou=new troubleDao().troubleRead(readKey);
+		
+		return SUCCESS;
+	}
+
+	public Trouble getTrou() {
+		return trou;
+	}
+	public void setTrou(Trouble trou) {
+		this.trou = trou;
+	}
+	public String getContents() {
+		return contents;
+	}
+	
+	
+	
+	
+
+	public String getTeacherid() {
+		return teacherid;
+	}
+	public void setTeacherid(String teacherid) {
+		this.teacherid = teacherid;
+	}
+	public List<Teacher> getTeacherLists() {
+		return teacherLists;
+	}
+	public void setTeacherLists(List<Teacher> teacherLists) {
+		this.teacherLists = teacherLists;
+	}
+	public List<Trouble> getTroubleLists() {
+		return troubleLists;
+	}
+	public void setTroubleLists(List<Trouble> troubleLists) {
+		this.troubleLists = troubleLists;
+	}
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+
+	public int getCounsel_seq() {
+		return counsel_seq;
+	}
+	public void setCounsel_seq(int counsel_seq) {
+		this.counsel_seq = counsel_seq;
+	}
+	public int getReadKey() {
+		return readKey;
+	}
+	public void setReadKey(int readKey) {
+		this.readKey = readKey;
+	}
+	public String getToday() {
+		return today;
+	}
+
+	public void setToday(String today) {
+		this.today = today;
+	}
+	public String getAnswer() {
+		return answer;
+	}
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+	
+	
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="subject">
+	<select id="teacherLists" parameterType="string" resultType="vo.Teacher">
+		select id,name from teacher where field=#{field}
+	</select>
+	<select id="subjectLists" resultType="vo.Subject">
+		select * from subject where subjectname!='역량평가'
+	
+	</select>
+	<!-- Subject [subject_seq=0, id=teacher1, subjectname=씨발짜증나, flag=28기, class_num=A반, start_date=20140101, end_date=20140101] -->
+ 	<insert id="insertSubject" parameterType="vo.Subject">
+		insert into subject values(
+		SEQ_subject_subject_seq.nextval,
+		#{id},
+		
+		#{subjectname},
+		#{flag},
+		#{class_num},
+		#{start_date},
+		#{end_date},
+		#{field},
+		#{content}
+		
+		
+	)
+	</insert> 
+	<select id="selectIt" resultType="vo.Subject">
+		select * from subject where field='IT' and subjectname!='역량평가'
+	</select>
+	
+	<update id="updateSubject" parameterType="vo.Subject">
+		update subject set flag=#{flag},
+		class_num=#{class_num}, 
+		subjectname=#{subjectname},
+		id=#{id},
+		start_date=#{start_date},
+		end_date=#{end_date},
+		content=#{content}
+		where subject_seq=#{subject_seq}
+	
+	</update>
+	
+	<delete id="deleteSubject" parameterType="int">
+		delete from subject where subject_seq=#{subject_seq}
+	</delete>
+	<select id="selectSubject" parameterType="int" resultType="vo.Subject">
+		select * from subject where subject_seq=#{subject_seq}
+	</select>
+	<insert id="detailInsert" parameterType="vo.Detail">
+		insert into detail values(SEQ_detail_detail_seq.nextval,
+		#{detailTitle},
+		#{subject_seq}
+		)
+	</insert>
+	<select id="detailLists" parameterType="int" resultType="vo.Detail">
+		select * from detail where subject_seq=#{subject_seq}
+	
+	</select>
+	<delete id="detailDelete" parameterType="int">
+		delete from detail where detail_seq=#{detail_seq}
+	</delete>
+	<select id="flagLists" resultType="vo.FlagVO">
+		select * from flag
+	</select>
+	<select id="selLists" resultType="string">
+		select distinct japanese from student 
+	</select>
+	<select id="selLists1" resultType="string" parameterType="string">
+		select distinct class_num from student where flagnum=#{flagnum}
+		
+	</select>
+	<delete id="deleteSubject1" parameterType="hashmap">
+		delete from subject where subjectname=#{deleteKey} and flag=#{deleteKey1}
+	</delete>
+	<select id="subjectLists1" parameterType="hashmap" resultType="vo.Subject">
+		select * from subject where flag=#{deleteKey3} and subjectname=#{deleteKey2}
+	</select>
+	<select id="selectTeacherLists2" parameterType="string" resultType="vo.Teacher">
+		 select id,name from teacher where id!=#{id} and field='IT'
+	</select>
+	<select id="teachername" parameterType="string" resultType="string">
+		select name from teacher where id=#{id}
+	</select>
+	<select id="selectNihon" resultType="vo.Subject">
+		select * from subject where field='일본어' and subjectname!='역량평가'
+	</select>
+
+	 
+</mapper>

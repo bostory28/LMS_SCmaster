@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+	<struts>
+	<package name="bbs" namespace="/bbs" extends="default">
+		
+		<!-- 통합 게시판 리스트 불러오기 -->
+		<action name="bbsList" class="bbs.BbsAction" method="bbsList">
+		<result>../jsp/bbs/bbsList.jsp</result>
+		</action>
+		
+		
+		<!-- 통합 게시판 글내용 자세히 읽기 -->
+		<action name="bbsDetail" class="bbs.BbsAction" method="bbsDetail">
+		<result>../jsp/bbs/bbsDetail.jsp</result>
+		</action>
+		
+		<!-- 새로운 글쓰기 양식으로 가기 -->
+		<action name="writeNewForm">
+		<result>../jsp/bbs/writeNewForm.jsp</result>
+		</action>
+		
+		<!-- 새로운 글쓰기  -->
+		<action name="writeNew" class="bbs.BbsAction" method="writeNew">
+		<result type="redirect">/bbs/bbsList.action</result>
+		</action>
+		
+		<!-- 특정한 글 지우기  -->
+		<action name="bbsDelete" class="bbs.BbsAction" method="bbsDelete">
+		<result type="redirect">/bbs/bbsList.action</result>
+		</action>
+	
+	
+		<!-- 특정한 글 수정 양식가기 -->
+		<action name="bbsEditForm" class="bbs.BbsAction" method="bbsEditForm">
+		<result>../jsp/bbs/bbsEditForm.jsp</result>
+		</action>
+		
+		<!-- 특정한 글 수정 -->
+		<action name="bbsEdit" class="bbs.BbsAction" method="bbsEdit">
+		<result type="redirect">/bbs/bbsList.action</result>
+		</action>
+		
+		<!-- ==============================첨삭(일본어)관련 ================================ -->
+		<!-- 일본어 첨삭 양식으로 이동 -->
+		<action name="goJpnWriteForm">
+		<result>../jsp/bbs/jpnWriteForm.jsp</result>
+		</action>
+		<!--원문의 문자열 나눠서 뿌려주기(<p>단위로) -->
+		<action name="splitContent"  class="bbs.ReplyAction" method="splitContent">
+		<result type="json"></result>
+		</action>	
+		<!--원문의 문자열 나눠서 뿌려주기(<p>단위로) -->
+		<action name="pfdWrite"  class="bbs.ReplyAction" method="pfdWrite">
+		<result type="json"></result>
+		</action>
+		
+		
+		<!--원문의 문자열 나눠서 뿌려주기(<p>단위로) -->
+		<action name="deletePfdReply"  class="bbs.ReplyAction" method="deletePfdReply">
+		<result type="json"></result>
+		</action>
+		
+		
+		
+		<!-- 첨삭 댓글 리스트 뿌려주기 -->
+		<action name="pfdReplyList"  class="bbs.ReplyAction" method="pfdReplyList">
+		<result type="json"></result>
+		</action>
+		
+	
+		
+		
+	
+		
+		
+		<!-- ==============================리플(댓글)관련 ================================ -->
+		<!-- 댓글 입력-->
+		<action name="writeReply" class="bbs.ReplyAction" method="writeReply">
+		<result type="json"></result>
+		</action>
+		
+		<!-- 댓글 입력-->
+		<action name="replyList" class="bbs.ReplyAction" method="replyList">
+		<result type="json"></result>
+		</action>
+		
+		<!-- 댓글 삭제-->
+		<action name="deleteReply" class="bbs.ReplyAction" method="deleteReply">
+		<result type="json"></result>
+		</action>
+		<!-- 댓글 수정-->
+		<action name="updateReply" class="bbs.ReplyAction" method="updateReply">
+		<result type="json"></result>
+		</action>
+		
+		
+		
+		
+		
+		<!-- 파일 다운로드  -->
+		<action name="fileDownload" class="common.FileDownloadAction" method="fileDownload">
+			<result type="stream">
+				<!-- 파일 타입 -->
+				<!-- action에서 xml로 전달되는 값 읽기 ${변수명} -->
+				<param name="contentType">${contentType}</param>  
+				<param name="contentLength">${contentLength}</param>
+				<!-- 실제 파일 변수명 -->
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">${contentDisposition}</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+		
+		
+	</package>
+	</struts>

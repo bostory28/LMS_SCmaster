@@ -1,0 +1,593 @@
+package subject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import vo.Detail;
+import vo.FlagVO;
+import vo.Student;
+import vo.StudentBan;
+import vo.Subject;
+import vo.Teacher;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class subjectAction extends ActionSupport {
+	
+	int subject_num;
+	int deleteKey;
+	String flag;
+	String subject;
+	String class_num;
+	String deleteKey1;
+	String deleteKey2;
+	String deleteKey3;
+	String teacher1;
+	String teacher2;
+	String subjectname;
+	String teacher;
+	String start_date;
+	String end_date;
+	String id;
+	String startyear;
+	String startmonth;
+	String teacher3;
+	String startday;
+	String endyear;
+	String endmonth;
+	String endday;
+	String content;
+	String detailTitle;
+	String class_num1;
+	String class_num2;
+	List<Teacher>teacherLists;
+	List<Subject>subjectLists;
+	List<Detail>detailLists;
+	List<FlagVO>flagLists;
+	Subject subj;
+	Subject subj1;
+	List<StudentBan>selLists;
+	String key;
+	String key1;
+	public String subjectIt(){
+		subjectLists=new subjectDao().selectIt();
+		return SUCCESS;
+	}
+	public String updateIt(){
+		int a=subj.getSubject_seq();
+		int b=subj1.getSubject_seq();
+		if (startmonth.length() == 1) {
+			startmonth = "0" + startmonth;
+		}
+		if (startday.length() == 1) {
+			startday = "0" + startday;
+		}
+		if (endmonth.length() == 1) {
+			endmonth = "0" + endmonth;
+		}
+		if (endday.length() == 1) {
+			endday = "0" + endday;
+		}
+		
+		
+		start_date = startyear + "-" + startmonth + "-" + startday;
+		end_date = endyear + "-" + endmonth + "-" + endday;
+		subj=new Subject(a,teacher1, subjectname, flag, class_num1, start_date, end_date, content, null);
+		subj1=new Subject(b,teacher2, subjectname, flag, class_num2, start_date, end_date, content, null);
+		new subjectDao().updateSubject(subj);
+		new subjectDao().updateSubject(subj1);
+		
+		return SUCCESS;
+	}
+	public String selectNihon(){
+		subjectLists=new subjectDao().selectNihon();
+		System.out.println("왜그래형");
+		System.out.println(subjectLists);
+		return SUCCESS;
+	}
+
+	public String subjectDelete(){
+		System.out.println(deleteKey);
+		System.out.println(deleteKey2);
+		if(deleteKey2.equals("IT")){
+			System.out.println(deleteKey2);
+			HashMap<String, Object> map=new HashMap<String, Object>();
+			map.put("deleteKey", deleteKey1);
+			map.put("deleteKey1", deleteKey3);
+			
+			new subjectDao().deleteSubject1(map);
+		}else if(deleteKey2.equals("일본어")){
+			
+			new subjectDao().deleteSubject(deleteKey);
+			
+		}
+		subjectLists=new subjectDao().subjectList();
+		
+		return SUCCESS;
+	}
+	public String selectTeacherLists2(){
+		teacherLists=new subjectDao().selectTeacherLists2(teacher1);
+		return SUCCESS;
+	}
+	public String selectSubject1(){
+		selLists=new subjectDao().selLists();
+		
+		teacherLists=new subjectDao().teacherList(subject);
+		
+		/*teacherLists=new subjectDao().selectTeacherLists2('');*/
+		System.out.println(selLists);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		
+		return SUCCESS;
+	}
+	public String updateForm1(){
+		String fu=null;
+		String ck=null;
+		try {
+			fu=new String(deleteKey2.getBytes("8859_1"),"UTF-8");
+			ck=new String(deleteKey3.getBytes("8859_1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(fu);
+		System.out.println(ck);
+		HashMap<String, Object> map=new HashMap<String, Object>();
+		map.put("deleteKey2", fu);
+		map.put("deleteKey3", ck);
+		
+		
+		subjectLists=new subjectDao().subjectList1(map);
+		System.out.println(subjectLists);
+		subj=subjectLists.get(0);
+		subj1=subjectLists.get(1);
+		System.out.println(deleteKey+"되자");
+		String ki=subj.getFlag();
+		
+		
+		selLists=new subjectDao().selLists1(ki);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		
+		key=new subjectDao().teachername(subj.getId());
+		key1=new subjectDao().teachername(subj1.getId());
+		
+		flagLists=new subjectDao().flagLists();
+		teacherLists=new subjectDao().teacherList("IT");
+		String[]stda=subj.getStart_date().split("-");
+		startyear=stda[0];
+		startmonth=stda[1];
+		startday=stda[2];
+		String[]edda=subj.getEnd_date().split("-");
+		endyear=edda[0];
+		endmonth=edda[1];
+		endday=edda[2];
+		
+		
+		
+		
+		
+		return SUCCESS;
+	}
+	public String detailUpdate(){
+		System.out.println("은다훈");
+		HashMap<String, Object> map=new HashMap<String, Object>();
+		map.put("deleteKey", deleteKey);
+		map.put("deleteKey1", deleteKey1);
+		System.out.println(map);
+		new subjectDao().detailUpdate(map);
+		
+		return SUCCESS;
+	}
+	
+	public String updateForm(){
+		subj=new subjectDao().selectSubject(deleteKey);
+		key=new subjectDao().teachername(subj.getId());
+		
+		
+		selLists=new subjectDao().selLists();
+		
+		teacherLists=new subjectDao().teacherList("일본어");
+		System.out.println(teacherLists+"nnn");
+		
+		
+		
+		flagLists=new subjectDao().flagLists();
+		
+		
+		
+		/*subj.get*/
+		
+		
+		//selLists=new subjectDao().selLists();
+		return SUCCESS;
+		
+	}
+	
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
+	public String getTeacher1() {
+		return teacher1;
+	}
+	public void setTeacher1(String teacher1) {
+		this.teacher1 = teacher1;
+	}
+	public String selectSubject2(){
+		return SUCCESS;
+	}
+	public String detailInsert(){
+		Detail det=new Detail(0, detailTitle, deleteKey);
+		System.out.println(det);
+		System.out.println(det);
+		System.out.println(det);
+		
+		new subjectDao().detailInsert(det);
+		
+		return SUCCESS;
+	}
+	public String detailDelete(){
+		new subjectDao().detailDelete(deleteKey);
+		return SUCCESS;
+	}
+	public String subjectList(){
+		subjectLists=new subjectDao().subjectList();
+		
+		
+		return SUCCESS;
+	}
+
+	
+	
+	public String getKey1() {
+		return key1;
+	}
+	public void setKey1(String key1) {
+		this.key1 = key1;
+	}
+	public String subjectDetail(){
+		
+		detailLists=new subjectDao().detailLists(deleteKey);
+		subj=new subjectDao().selectSubject(deleteKey);
+		System.out.println(detailLists);
+		System.out.println(detailLists);
+		System.out.println(detailLists);
+		
+		System.out.println(detailLists);
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	public Subject getSubj1() {
+		return subj1;
+	}
+	public void setSubj1(Subject subj1) {
+		this.subj1 = subj1;
+	}
+	public String getDeleteKey3() {
+		return deleteKey3;
+	}
+	public void setDeleteKey3(String deleteKey3) {
+		this.deleteKey3 = deleteKey3;
+	}
+	public String teacherList(){
+	
+		
+		teacherLists=new subjectDao().teacherList(subject);
+		
+		selLists=new subjectDao().selLists1(flag);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		System.out.println(selLists);
+		//flagLists
+		
+	
+		
+		
+		
+		return SUCCESS;
+	}
+	public String flagLists(){
+		
+		flagLists=new subjectDao().flagLists();
+		return SUCCESS;
+	}
+	
+	
+	public String getDeleteKey1() {
+		return deleteKey1;
+	}
+	public void setDeleteKey1(String deleteKey1) {
+		this.deleteKey1 = deleteKey1;
+	}
+	public List<FlagVO> getFlagLists() {
+		return flagLists;
+	}
+	public void setFlagLists(List<FlagVO> flagLists) {
+		this.flagLists = flagLists;
+	}
+	public String detailForm(){
+		
+		subj=new subjectDao().selectSubject(deleteKey);
+		
+		
+		return SUCCESS;
+	}
+	
+
+	public String getDeleteKey2() {
+		return deleteKey2;
+	}
+	public void setDeleteKey2(String deleteKey2) {
+		this.deleteKey2 = deleteKey2;
+	}
+	public String getTeacher3() {
+		return teacher3;
+	}
+	public void setTeacher3(String teacher3) {
+		this.teacher3 = teacher3;
+	}
+	public String insertSubject() {
+		System.out.println("ddd");
+		if (startmonth.length() == 1) {
+			startmonth = "0" + startmonth;
+		}
+		if (startday.length() == 1) {
+			startday = "0" + startday;
+		}
+		if (endmonth.length() == 1) {
+			endmonth = "0" + endmonth;
+		}
+		if (endday.length() == 1) {
+			endday = "0" + endday;
+		}
+		
+		System.out.println("aaaaaa");
+		start_date = startyear + "-" + startmonth + "-" + startday;
+		end_date = endyear + "-" + endmonth + "-" + endday;
+		System.out.println("11111");
+		System.out.println("11111");
+		System.out.println("11111");
+		if(class_num1.equals("A반")&&subject.equals("IT")){
+			Subject sub=new Subject(0, teacher1, subjectname, flag, class_num1, start_date, end_date, content,subject);
+			System.out.println(sub);
+			new subjectDao().insertSubject(sub);
+		}
+		if(class_num2.equals("B반")&&subject.equals("IT")){
+			Subject sub2=new Subject(0, teacher2, subjectname, flag, class_num2, start_date, end_date, content,subject);
+			System.out.println(sub2);
+			System.out.println(sub2);
+			System.out.println(sub2);
+			System.out.println(sub2);
+			System.out.println(sub2);
+			new subjectDao().insertSubject(sub2);
+		}
+		if(subject.equals("일본어")){
+			Subject sub3=new Subject(0, teacher3, subjectname, flag, class_num, start_date, end_date, content,subject);
+			System.out.println(sub3);
+			new subjectDao().insertSubject(sub3);
+		}
+		
+		subjectLists=new subjectDao().subjectList();
+
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	public String getTeacher2() {
+		return teacher2;
+	}
+	public void setTeacher2(String teacher2) {
+		this.teacher2 = teacher2;
+	}
+	
+	
+	public List<StudentBan> getSelLists() {
+		return selLists;
+	}
+	public void setSelLists(List<StudentBan> selLists) {
+		this.selLists = selLists;
+	}
+	public List<Subject> getSubjectLists() {
+		return subjectLists;
+	}
+	
+	
+	
+	
+
+	public List<Detail> getDetailLists() {
+		return detailLists;
+	}
+	public void setDetailLists(List<Detail> detailLists) {
+		this.detailLists = detailLists;
+	}
+	public String getDetailTitle() {
+		return detailTitle;
+	}
+	public void setDetailTitle(String detailTitle) {
+		this.detailTitle = detailTitle;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public void setSubjectLists(List<Subject> subjectLists) {
+		this.subjectLists = subjectLists;
+	}
+
+	public List<Teacher> getTeacherLists() {
+		return teacherLists;
+	}
+
+	public void setTeacherLists(List<Teacher> teacherLists) {
+		this.teacherLists = teacherLists;
+	}
+	
+
+	
+
+	public Subject getSubj() {
+		return subj;
+	}
+	public void setSubj(Subject subj) {
+		this.subj = subj;
+	}
+	public int getDeleteKey() {
+		return deleteKey;
+	}
+	public void setDeleteKey(int deleteKey) {
+		this.deleteKey = deleteKey;
+	}
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(String teacher) {
+		this.teacher = teacher;
+	}
+
+	public String getStartyear() {
+		return startyear;
+	}
+
+	public void setStartyear(String startyear) {
+		this.startyear = startyear;
+	}
+
+	public String getStartmonth() {
+		return startmonth;
+	}
+
+	public void setStartmonth(String startmonth) {
+		this.startmonth = startmonth;
+	}
+
+	public String getStartday() {
+		return startday;
+	}
+
+	public void setStartday(String startday) {
+		this.startday = startday;
+	}
+	
+
+	public String getClass_num1() {
+		return class_num1;
+	}
+	public void setClass_num1(String class_num1) {
+		this.class_num1 = class_num1;
+	}
+	public String getClass_num2() {
+		return class_num2;
+	}
+	public void setClass_num2(String class_num2) {
+		this.class_num2 = class_num2;
+	}
+	public String getEndyear() {
+		return endyear;
+	}
+
+	public void setEndyear(String endyear) {
+		this.endyear = endyear;
+	}
+
+	public String getEndmonth() {
+		return endmonth;
+	}
+
+	public void setEndmonth(String endmonth) {
+		this.endmonth = endmonth;
+	}
+
+	public String getEndday() {
+		return endday;
+	}
+
+	public void setEndday(String endday) {
+		this.endday = endday;
+	}
+
+	public int getSubject_num() {
+		return subject_num;
+	}
+
+	public void setSubject_num(int subject_num) {
+		this.subject_num = subject_num;
+	}
+
+	public String getClass_num() {
+		return class_num;
+	}
+
+	public void setClass_num(String class_num) {
+		this.class_num = class_num;
+	}
+
+	
+	public String getSubjectname() {
+		return subjectname;
+	}
+
+	public void setSubjectname(String subjectname) {
+		this.subjectname = subjectname;
+	}
+
+	public String getStart_date() {
+		return start_date;
+	}
+
+	public void setStart_date(String start_date) {
+		this.start_date = start_date;
+	}
+
+	public String getEnd_date() {
+		return end_date;
+	}
+
+	public void setEnd_date(String end_date) {
+		this.end_date = end_date;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+}

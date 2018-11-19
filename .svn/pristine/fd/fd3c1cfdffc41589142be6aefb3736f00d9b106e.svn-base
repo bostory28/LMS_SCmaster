@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="trouble">
+	<insert id="troubleInsert" parameterType="vo.Trouble">
+		insert into counsel_board values(
+			counsel_seq.nextval,
+			#{studentid},
+			#{title},
+			#{contents},
+			#{inputdate},
+			#{teacherid}
+		)
+	</insert>	
+	<select id="troubleLists" resultType="vo.Trouble">
+		select*from counsel_board
+	</select>
+	<select id="troubleRead" parameterType="int" resultType="vo.Trouble">
+		select*from counsel_board where counsel_seq=#{counsel_seq}
+	</select>
+	<select id="teacherLists" resultType="vo.Teacher">
+		select name,id from teacher
+	</select>
+</mapper>

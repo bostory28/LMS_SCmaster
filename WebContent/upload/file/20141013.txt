@@ -1,0 +1,13 @@
+	//data는 타임스탬프값이다.
+		var inputmillis = Number($this.attr('data')); //작성된 시간
+		var inputdate = new Date(inputmillis);	
+		  
+		  year = "" + inputdate.getFullYear();
+		  month = "" + (inputdate.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+		  day = "" + inputdate.getDate(); if (day.length == 1) { day = "0" + day; }
+		  hour = "" + inputdate.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+		  minute = "" + inputdate.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+		  second = "" + inputdate.getSeconds(); if (second.length == 1) { second = "0" + second; }
+		  var fmtinputdate=  year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+		
+		$this.text(fmtinputdate);

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="attendance">
+	<select id="getNameList" parameterType="hashmap" resultType="vo.Student">
+		select * from student
+		where flagnum=#{flag} and class_num=#{class_num}
+		order by name 
+	</select>
+	
+	<insert id="insertAttendance" parameterType="vo.Attendance">
+		insert 
+		into 
+			attendance 
+		values(
+			#{id}
+			,#{name}
+			,#{attendance_date}
+			,#{attendance_check})
+	</insert>
+	
+	<update id = "updateAttendance" parameterType="vo.Attendance">
+		update
+			attendance
+		set
+			attendance_check = #{attendance_check}
+		where 
+			name = #{name} and attendance_date = #{attendance_date}
+	</update>
+
+	<select id="selectAttendanceList" parameterType="hashmap" resultType="vo.Attendance">
+		select 
+			a.id,a.name,a.attendance_date,a.attendance_check
+		from 
+			student s, attendance a 
+		where 
+			s.id=a.id and 
+			s.flagnum=#{flag} and 
+			s.class_num=#{class_num} and 
+			substr(a.attendance_date,1,6)=#{attendance_date}
+		order by 
+			a.attendance_date
+	</select>
+	
+	<select id = "selectAttendanceList2" parameterType="hashmap" resultType="vo.Attendance">
+		select 
+			a.id,a.name,a.attendance_date,a.attendance_check
+		from 
+			student s, attendance a 
+		where 
+			s.id=a.id and 
+			s.flagnum=#{flag} and 
+			s.class_num=#{class_num} and 
+			a.attendance_date=#{attendance_date}
+		order by 
+			a.name
+	</select>
+	
+	<select id="getFlagList" resultType="string">
+		select * from flag
+	</select>
+	
+	<select id = "getClass_numList" resultType="string">
+		select distinct class_num from student 
+	</select>
+	
+	<!-- 여기서 부터는 사유서 관련 매퍼입니다. -->
+	
+	<select id = "getStatement" parameterType="string" resultType="vo.StatementVo">
+		select * from statement where statement_key = #{statement_key}
+	</select>
+	
+	<insert id="insertStatement" parameterType="vo.StatementVo">
+		insert into
+			statement
+		values(
+			#{statement_key},
+			#{affiliation},
+			#{name},
+			#{content},
+			#{reason},
+			#{afterplan},
+			sysdate
+			)	
+	</insert>
+	
+	<update id="updateStatement" parameterType="vo.StatementVo">
+		update
+			statement
+		set
+			affiliation = #{affiliation},
+			name = #{name},
+			content = #{content},
+			reason = #{reason},
+			afterplan = #{afterplan},
+			inputdate = sysdate
+		where 
+			statement_key = #{statement_key}
+	</update>
+	
+	
+</mapper>

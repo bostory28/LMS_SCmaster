@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+	<struts>
+	<package name="prob" namespace="/prob" extends="default">
+		
+		<!-- 문제 만들기 불러오기 -->
+		<action name="ProbMakingForm" class="prob.ProbAction" method="ProbMakingForm">
+		<result>/jsp/prob/probMaking.jsp</result>
+		</action>
+		
+		<!-- 문제 만들어서 집어 넣기 -->
+		<action name="insertProb" class="prob.ProbAction" method="insertProb">
+		<result type="json"></result>
+		</action>
+		
+		<!-- 문제 은행 리스트 뽑아오기 -->
+		<action name="problemList" class="prob.ProbAction" method="problemList">
+		<result type="json"></result>
+		</action>
+		
+		<!-- 문제 은행 리스트 뽑아오기 -->
+		<action name="getProb" class="prob.ProbAction" method="getProb">
+		<result type="json"></result>
+		</action>
+		
+		<!-- test테이블에 해당하는 곳에 시험넣어주기 -->
+		<action name="submitTest" class="prob.ProbAction" method="submitTest">
+		<result type="json"></result>
+		</action>
+		
+			
+		<!-- 문제풀기 시험용지 불러오기 -->
+		<action name="ProbSolving" class="prob.ProbAction" method="solvingForm">
+		<result>/jsp/prob/solvingForm.jsp</result>
+		</action>
+		
+		<!-- 시험객체 만들기 -->
+		<action name="createTest" class="prob.ProbAction" method="createTest">
+		<result type="json"></result>
+		</action>
+		
+		
+		
+	
+		<!-- 문제풀이 결과 제출 -->
+		<action name="testResult" class="prob.ProbAction" method="testResult">
+		<result>/jsp/prob/testResult.jsp</result>
+		</action>
+		
+		
+		
+		
+		
+		
+		
+	</package>
+	</struts>
